@@ -11,6 +11,8 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 	- There will be many different types of tasks
 	- Object inheritance for these types of tasks beyond the standard task
 	- e.g. expiring tasks, priority tasks, overdue tasks
+- User will have a one-to-many relationship with tasks
+
 
 ## Testing
 
@@ -24,12 +26,20 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 	- `ps -ef | grep redis`
 	- ![RedisCheck](./pictures/CheckRedisRunning.png)
 
+### PostgreSQL
+- Install Postgres, if not already installed
+	- `brew install postgresql`
+	- `initdb /usr/local/var/postgres/`
+- Start Postgres
+	- `sudo psql -U my_macosx_username postgres`
+	- `brew services start postgresql`
+	- `ALTER USER my_macosx_username PASSWORD 'abc123';`
+	- `CREATE DATABASE todo_list`
+
 ### Start Backend
 - To run the backend of the application, first clone the repository:
 	- `git clone https://github.com/psebaraj/gogetitdone.git`
-
 - Navigate to the GoGetItDone directory
-
 - Build and run the application:
 	- `go run main.go`
 

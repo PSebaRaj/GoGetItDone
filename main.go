@@ -1,19 +1,33 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+
+	"github.com/jinzhu/gorm"
+	"github.com/psebaraj/gogetitdone/database"
+	"github.com/psebaraj/gogetitdone/models"
+	"github.com/psebaraj/gogetitdone/routes"
+
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-func InitRoutes() { // replace later with seperate routes folder / file to add CORS
-
-	router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/todos", controllers.GetTodos).Methods("GET")
-}
+var DB *gorm.DB
+var err error
 
 func main() {
 
-	InitRoutes()
-}
+	DB = database.Connect()
 
-// test test test
+	// Close the databse connection when the main function closes
+	defer DB.Close()
+
+	// Make migrations to the database if they haven't been made already
+	DB.AutoMigrate(&models.Person{})
+	DB.AutoMigrate(&models.Task{})
+
+	/*----------- API routes ------------*/
+	router := routes.NewRouter()
+
+	log.Fatal(http.ListenAndServe(":8080", routes.LoadCors(router)))
+}
