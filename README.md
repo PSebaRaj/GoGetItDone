@@ -1,5 +1,5 @@
 # GoGetItDone
- Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
+Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
 ## Justifications for Technology Stack
 ### Redis
@@ -14,12 +14,29 @@
 
 ## Testing
 
-### Clone Repository
+### Redis
+- Install Redis, if not already installed
+- To install:
+	- `brew install redis`
+	- `brew services start redis`
+	- `redis-server /usr/local/etc/redis.conf`
+- Check if Redis is running and its port:
+	- `ps -ef | grep redis`
+	- ![RedisCheck](./CheckRedisRunning.png)
+
+### Start Backend
+- To run the backend of the application, first clone the repository:
+	- `git clone https://github.com/psebaraj/gogetitdone.git`
+
+- Navigate to the GoGetItDone directory
+
+- Build and run the application:
+	- `go run main.go`
 
 ### Postman
 The Postman collection for testing the REST API functions can be found [here](https://www.getpostman.com/collections/40ab42d058be92ae4ef7):
 
 To test:
-1. Open Postman &rarr; Import &rarr; Link &rarr; Paste link from above &rarr; Import
-2. Start backend, as described above
+- Open Postman &rarr; Import &rarr; Link &rarr; Paste link from above &rarr; Import
+- Start backend, as described above
 
