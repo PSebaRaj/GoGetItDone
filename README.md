@@ -22,7 +22,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 	- `redis-server /usr/local/etc/redis.conf`
 - Check if Redis is running and its port:
 	- `ps -ef | grep redis`
-	- ![RedisCheck](./CheckRedisRunning.png)
+	- ![RedisCheck](./pictures/CheckRedisRunning.png)
 
 ### Start Backend
 - To run the backend of the application, first clone the repository:
