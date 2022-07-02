@@ -15,7 +15,7 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 	var person models.Person
 	var tasks []models.Task
 
-	database.DB.First(&person, params["id"])
+	database.DB.First(&person, "email = ?", params["email"])
 	database.DB.Model(&person).Related(&tasks)
 
 	person.Tasks = tasks
@@ -49,7 +49,7 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
 
 	var person models.Person
 
-	database.DB.First(&person, params["id"])
+	database.DB.First(&person, "email = ?", params["email"])
 	database.DB.Delete(&person)
 
 	json.NewEncoder(w).Encode(&person)

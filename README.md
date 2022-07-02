@@ -5,6 +5,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 ### Redis
 - Redis is used to cache tasks
 	- Users will likely view a task's details frequently in a short span of time.
+	- Note that only the tasks are cached, not the user data
 
 ### PostgreSQL
 - PostgreSQL is used for long-term storage of tasks
@@ -33,8 +34,8 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 - Start Postgres
 	- `sudo psql -U my_macosx_username postgres`
 	- `brew services start postgresql`
-	- `ALTER USER my_macosx_username PASSWORD 'abc123';`
-	- `CREATE DATABASE todo_list`
+	- `ALTER USER my_macosx_username PASSWORD 'new_password';`
+	- `CREATE DATABASE todo_list;`
 
 ### Start Backend
 - To run the backend of the application, first clone the repository:

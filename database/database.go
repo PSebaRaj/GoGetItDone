@@ -5,7 +5,8 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
+	"github.com/psebaraj/gogetitdone/models"
+	"github.com/psebaraj/gogetitdone/utils"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -15,11 +16,7 @@ var err error
 
 func Connect() *gorm.DB {
 	// Loading enviroment variables
-	err = godotenv.Load(".env")
-	if err != nil {
-		fmt.Println("Could not load env variables")
-		panic(err)
-	}
+	utils.LoadEnvVars()
 
 	// Setting environment variables
 	dialect := os.Getenv("DIALECT")
@@ -42,4 +39,14 @@ func Connect() *gorm.DB {
 	}
 
 	return DB
+}
+
+func AutoMigrateAll() {
+
+	err = DB.AutoMigrate(&models.Person{}, &models.Task{}).Error
+	if err != nil {
+		fmt.Printf("Unable to AutoMigrate model(s) %s, %s to Postgres DB", "Person", "Task")
+		panic(err)
+	}
+
 }
