@@ -8,17 +8,23 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/psebaraj/gogetitdone/database"
 	"github.com/psebaraj/gogetitdone/models"
+	"github.com/psebaraj/gogetitdone/utils"
 )
 
 func GetPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var person models.Person
 	var tasks []models.Task
+	var expiringTasks []models.ExpiringTask
 
 	database.DB.First(&person, "email = ?", params["email"])
 	database.DB.Model(&person).Related(&tasks)
+	database.DB.Model(&person).Related(&expiringTasks)
+
+	utils.UpdateExpiringTaskTimeLeft(expiringTasks)
 
 	person.Tasks = tasks
+	person.ExpiringTasks = expiringTasks
 
 	json.NewEncoder(w).Encode(&person)
 }

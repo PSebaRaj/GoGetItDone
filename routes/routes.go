@@ -19,5 +19,11 @@ func NewRouter() *mux.Router {
 	router.HandleFunc("/delete/person/{email}", controllers.DeletePerson).Methods("DELETE")
 	router.HandleFunc("/delete/task/{id}", controllers.DeleteTask).Methods("DELETE")
 
+	// expiring tasks
+	router.HandleFunc("/expiringtasks", controllers.GetExpiringTasks).Methods("GET")
+	router.HandleFunc("/expiringtask/{id}", controllers.GetExpiringTask).Methods("GET")
+	router.HandleFunc("/create/expiringtask", controllers.CreateExpiringTask).Methods("POST")
+	router.HandleFunc("/delete/expiringtask/{id}", controllers.DeleteExpiringTask).Methods("DELETE")
+
 	return router
 }

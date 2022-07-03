@@ -1,6 +1,12 @@
 # GoGetItDone
 Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
+## Features
+- Getting an expiring task will return the expiration time in the local time zone of the origin of the request
+	- Give expiry time for expiring tasks in GMT for consistency
+- Getting a user returns their details and all of their tasks
+	- (Regular) tasks, expiring tasks, priority tasks, etc.
+
 ## Justifications for Technology Stack
 ### Redis
 - Redis is used to cache tasks
