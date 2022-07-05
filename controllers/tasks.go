@@ -12,6 +12,8 @@ import (
 	"github.com/psebaraj/gogetitdone/models"
 )
 
+// controller: get singular (regular) task
+// res: one task as JSON
 func GetTask(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var task models.Task
@@ -32,6 +34,8 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&task)
 }
 
+// controller: get all (regular) tasks
+// res: list of tasks as JSON
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 	var tasks []models.Task
 
@@ -40,6 +44,8 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&tasks)
 }
 
+// controller: create singular (regular) task
+// res: created (regular) task as JSON
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	var task models.Task
 	json.NewDecoder(r.Body).Decode(&task)
@@ -47,19 +53,26 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	createdTask := database.DB.Create(&task)
 	err := createdTask.Error
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error creating task %s, error: %s", task.Title, err)
 	}
 
 	json.NewEncoder(w).Encode(&createdTask)
 }
 
+// controller: delete singular (regular) task
+// res: deleted task as JSON
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	var task models.Task
 
 	database.DB.First(&task, params["id"])
-	database.DB.Delete(&task)
+	deleted := database.DB.Delete(&task)
+
+	err := deleted.Error
+	if err != nil {
+		fmt.Printf("Error deleting task %s, error: %s", task.Title, err)
+	}
 
 	// also delete from cache
 	cache.DeleteFromCache(cache.REDIS, params["id"])

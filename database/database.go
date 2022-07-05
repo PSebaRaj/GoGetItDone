@@ -20,12 +20,12 @@ func Connect() *gorm.DB {
 	utils.LoadEnvVars()
 
 	// Setting environment variables
-	dialect := os.Getenv("DIALECT")
-	host := os.Getenv("HOST")
-	dbPort := os.Getenv("DBPORT")
-	user := os.Getenv("USER")
-	dbname := os.Getenv("NAME")
-	dbpassword := os.Getenv("PASSWORD")
+	dialect := os.Getenv("DB_DIALECT")
+	host := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	dbname := os.Getenv("DB_NAME")
+	dbpassword := os.Getenv("DB_PASSWORD")
 
 	//postgresURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s port=%s", host, user, dbname, dbpassword, dbPort)
 	postgresURI := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", host, dbPort, user, dbname, dbpassword)
@@ -42,6 +42,7 @@ func Connect() *gorm.DB {
 	return DB
 }
 
+// Make migrations to the database if they haven't been made already
 func AutoMigrateAll() {
 
 	err = DB.AutoMigrate(&models.Person{}, &models.Task{}, &models.ExpiringTask{}).Error
@@ -65,12 +66,12 @@ func UpdateExpiringTask(expiringTasks []models.ExpiringTask) {
 // doesn't make sense, too many processes/threads required
 func updateExpiringTasksInDB(expiringTasks []models.ExpiringTask) {
 	for i := 0; i < len(expiringTasks); i++ {
-		sqlStatement := `
+		psqlStatement := `
 		UPDATE expiring_tasks
 		SET time_left = $2
 		WHERE id = $1;`
 
-		err = DB.Exec(sqlStatement, expiringTasks[i].ID, time.Duration(expiringTasks[i].ExpiringAt.Sub(time.Now()).Minutes())).Error
+		err = DB.Exec(psqlStatement, expiringTasks[i].ID, time.Duration(expiringTasks[i].ExpiringAt.Sub(time.Now()).Minutes())).Error
 		if err != nil {
 			fmt.Printf("Error updating Expiring Task: %s", expiringTasks[i].Title)
 			panic(err)

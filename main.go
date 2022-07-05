@@ -14,18 +14,16 @@ import (
 
 var DB *gorm.DB
 
+// server running on PORT 8080
 func main() {
 
 	DB = database.Connect()
 
-	// Close the database connection when the main function closes
 	defer DB.Close()
 
-	// Make migrations to the database if they haven't been made already
 	database.AutoMigrateAll()
 	cache.ConnectRedisCache()
 
-	/*----------- API routes ------------*/
 	router := routes.NewRouter()
 
 	log.Fatal(http.ListenAndServe(":8080", routes.LoadCors(router)))

@@ -1,6 +1,13 @@
 # GoGetItDone
 Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
+## To-Do:
+- [ ] Error handling on concurrent processes
+	- Namely UpdateExpiringTask (updates DB and JSON res)
+- [ ] Set/change cache expiration time for REDIS
+- [ ] Use Prepare (Postgres) to cache PSQL statements for speed
+	- UpdateExpiringTask
+
 ## Features
 - Getting an expiring task will return the expiration time in the local time zone of the origin of the request
 	- Give expiry time for expiring tasks in GMT for consistency
@@ -20,9 +27,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 	- e.g. expiring tasks, priority tasks, overdue tasks
 - User will have a one-to-many relationship with tasks
 
-
 ## Testing
-
 ### Redis
 - Install Redis, if not already installed
 - To install:
@@ -47,13 +52,11 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 - To run the backend of the application, first clone the repository:
 	- `git clone https://github.com/psebaraj/gogetitdone.git`
 - Navigate to the GoGetItDone directory
+- Create .env file and entire appropriate credentials for:
+	- `DB_DIALECT, DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASSWORD`
+	- `REDIS_HOST, REDIS_PORT, REDIS_PASSWORD`
 - Build and run the application:
 	- `go run main.go`
 
 ### Postman
-The Postman collection for testing the REST API functions can be found [here](https://www.getpostman.com/collections/40ab42d058be92ae4ef7):
-
-To test:
-- Open Postman &rarr; Import &rarr; Link &rarr; Paste link from above &rarr; Import
-- Start backend, as described above
-
+The Postman collection for testing the REST API functions can be found [here](https://www.getpostman.com/collections/40ab42d058be92ae4ef7)

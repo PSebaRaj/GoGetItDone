@@ -3,26 +3,30 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/psebaraj/gogetitdone/cache"
 	"github.com/psebaraj/gogetitdone/database"
 	"github.com/psebaraj/gogetitdone/models"
 )
 
+// controller: get singular expiring task
+// res: one task as JSON
 func GetExpiringTask(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var expiringTask models.ExpiringTask
 
 	// If the element is found in the redis cache, directly return it
-	//res := cache.GetFromCache(cache.REDIS, params["id"])
-	//if res != nil {
-	//fmt.Println("Cache hit")
-	//io.WriteString(w, res.(string))
-	//return
-	//}
-	//fmt.Println("Cache miss")
+	res := cache.GetFromCache(cache.REDIS, params["id"])
+	if res != nil {
+		fmt.Println("Cache hit")
+		io.WriteString(w, res.(string))
+		return
+	}
+	fmt.Println("Cache miss")
 	database.DB.First(&expiringTask, params["id"])
 
 	// utils/clientLoading
@@ -30,10 +34,12 @@ func GetExpiringTask(w http.ResponseWriter, r *http.Request) {
 
 	// Set element in the redis cache before returning the result
 	// "id" is what I query with
-	//cache.SetInCache(cache.REDIS, params["id"], expiringTask)
+	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
 	json.NewEncoder(w).Encode(&expiringTask)
 }
 
+// controller: get all expiring tasks
+// res: list of tasks as JSON
 func GetExpiringTasks(w http.ResponseWriter, r *http.Request) {
 	var expiringTasks []models.ExpiringTask
 
@@ -45,6 +51,8 @@ func GetExpiringTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&expiringTasks)
 }
 
+// controller: create singular expiring task
+// res: created expiring task as JSON
 func CreateExpiringTask(w http.ResponseWriter, r *http.Request) {
 	var expiringTask models.ExpiringTask
 	json.NewDecoder(r.Body).Decode(&expiringTask)
@@ -58,6 +66,8 @@ func CreateExpiringTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&createdExpiringTask)
 }
 
+// controller: delete singular expiring task
+// res: deleted task as JSON
 func DeleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
@@ -67,7 +77,7 @@ func DeleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 	database.DB.Delete(&expiringTask)
 
 	// also delete from cache
-	//cache.DeleteFromCache(cache.REDIS, params["id"])
+	cache.DeleteFromCache(cache.REDIS, params["id"])
 
 	json.NewEncoder(w).Encode(&expiringTask)
 }
