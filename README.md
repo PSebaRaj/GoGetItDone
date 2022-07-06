@@ -1,4 +1,9 @@
 # GoGetItDone
+[![Latest Release](https://img.shields.io/github/release/psebaraj/gogetitdone.svg?style=for-the-badge)](https://github.com/psebaraj/gogetitdone/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](/LICENSE)
+[![Build Status](https://img.shields.io/github/workflow/status/psebaraj/gogetitdone/build?style=for-the-badge)](https://github.com/psebaraj/gogetitdone/actions)
+[![Go ReportCard](https://goreportcard.com/badge/github.com/psebaraj/gogetitdone?style=for-the-badge)](https://goreportcard.com/report/psebaraj/gogetitdone)
+
 Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
 ## To-Do:
@@ -7,6 +12,9 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 - [ ] Set/change cache expiration time for REDIS
 - [ ] Use Prepare (Postgres) to cache PSQL statements for speed
 	- UpdateExpiringTask
+	- [GORM Doc 1](https://gorm.io/docs/performance.html)
+	- [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)
+- [ ] Refactor tasks with interfaces
 
 ## Features
 - Getting an expiring task will return the expiration time in the local time zone of the origin of the request
