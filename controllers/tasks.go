@@ -54,6 +54,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	err := createdTask.Error
 	if err != nil {
 		fmt.Printf("Error creating task %s, error: %s", task.Title, err)
+		return
 	}
 
 	json.NewEncoder(w).Encode(&createdTask)
@@ -72,10 +73,68 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	err := deleted.Error
 	if err != nil {
 		fmt.Printf("Error deleting task %s, error: %s", task.Title, err)
+		return
 	}
 
 	// also delete from cache
 	cache.DeleteFromCache(cache.REDIS, params["id"])
+
+	json.NewEncoder(w).Encode(&task)
+}
+
+// controller: toggle complete boolean for a (regular) task
+// res: updated (regular) task with toggled completion status as JSON
+func ToggleCompleteTask(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var task models.Task
+
+	// Ignore cache, go straight to DB
+	database.DB.First(&task, params["id"])
+	database.ToggleTaskComplete(database.TYPE_TASK, task.ID, task.Complete) // updates DB
+	task.Complete = !task.Complete                                          // updates response
+
+	// Update element in the redis cache before returning the result
+	cache.SetInCache(cache.REDIS, params["id"], task)
+
+	json.NewEncoder(w).Encode(&task)
+}
+
+// controller: changes title of a (regular) task
+// res: updated (regular) task with new title as JSON
+func ChangeTitleTask(w http.ResponseWriter, r *http.Request) {
+	var newTitle models.TaskModifier
+	json.NewDecoder(r.Body).Decode(&newTitle)
+
+	params := mux.Vars(r)
+	var task models.Task
+
+	// Ignore cache, go straight to DB
+	database.DB.First(&task, params["id"])
+	database.ChangeTaskTitle(database.TYPE_TASK, task.ID, newTitle.Title) // updates DB
+	task.Title = newTitle.Title                                           // updates response
+
+	// Update element in the redis cache before returning the result
+	cache.SetInCache(cache.REDIS, params["id"], task)
+
+	json.NewEncoder(w).Encode(&task)
+}
+
+// controller: changes description of a (regular) task
+// res: updated (regular) task with new description as JSON
+func ChangeDescriptionTask(w http.ResponseWriter, r *http.Request) {
+	var newDescription models.TaskModifier
+	json.NewDecoder(r.Body).Decode(&newDescription)
+
+	params := mux.Vars(r)
+	var task models.Task
+
+	// Ignore cache, go straight to DB
+	database.DB.First(&task, params["id"])
+	database.ChangeTaskDescription(database.TYPE_TASK, task.ID, newDescription.Description) // updates DB
+	task.Description = newDescription.Description                                           // updates response
+
+	// Update element in the redis cache before returning the result
+	cache.SetInCache(cache.REDIS, params["id"], task)
 
 	json.NewEncoder(w).Encode(&task)
 }

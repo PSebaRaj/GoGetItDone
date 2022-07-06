@@ -18,3 +18,13 @@ type ExpiringTask struct {
 	ExpiringAt time.Time
 	TimeLeft   time.Duration
 }
+
+// used to update the expiry time parameter before the response is encoded
+// into JSON and sent
+func UpdateExpiringTaskTimeLeft(expiringTasks []ExpiringTask) {
+
+	for i := 0; i < len(expiringTasks); i++ {
+		expiringTasks[i].TimeLeft = time.Duration(expiringTasks[i].ExpiringAt.Sub(time.Now()).Minutes())
+	}
+	// add error handling
+}

@@ -13,3 +13,8 @@ type Task struct {
 	Complete    bool
 	PersonID    int
 }
+
+type TaskModifier struct {
+	Title       string `json`
+	Description string `json`
+}

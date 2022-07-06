@@ -17,17 +17,20 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 	var person models.Person
 	var tasks []models.Task
 	var expiringTasks []models.ExpiringTask
+	var priorityTasks []models.PriorityTask
 
 	database.DB.First(&person, "email = ?", params["email"])
 	database.DB.Model(&person).Related(&tasks)
 	database.DB.Model(&person).Related(&expiringTasks)
+	database.DB.Model(&person).Related(&priorityTasks)
 
 	// update expiry time in both JSON response and Postgres DB
 	database.UpdateExpiringTask(expiringTasks)
-	//utils.UpdateExpiringTaskTimeLeft(expiringTasks)
+	//models.UpdateExpiringTaskTimeLeft(expiringTasks)
 
 	person.Tasks = tasks
 	person.ExpiringTasks = expiringTasks
+	person.PriorityTasks = priorityTasks
 
 	json.NewEncoder(w).Encode(&person)
 }
@@ -53,6 +56,7 @@ func CreatePerson(w http.ResponseWriter, r *http.Request) {
 	err := createdPerson.Error
 	if err != nil {
 		fmt.Printf("Error creating person %s, error: %s", person.Name, err)
+		return
 	}
 
 	json.NewEncoder(w).Encode(&createdPerson)
@@ -71,6 +75,7 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
 	err := deleted.Error
 	if err != nil {
 		fmt.Printf("Error deleting person %s, error: %s", person.Name, err)
+		return
 	}
 
 	json.NewEncoder(w).Encode(&person)

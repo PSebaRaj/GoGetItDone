@@ -45,9 +45,9 @@ func Connect() *gorm.DB {
 // Make migrations to the database if they haven't been made already
 func AutoMigrateAll() {
 
-	err = DB.AutoMigrate(&models.Person{}, &models.Task{}, &models.ExpiringTask{}).Error
+	err = DB.AutoMigrate(&models.Person{}, &models.Task{}, &models.ExpiringTask{}, &models.PriorityTask{}).Error
 	if err != nil {
-		fmt.Printf("Unable to AutoMigrate model(s) %s, %s. %s to Postgres DB", "Person", "Task", "ExpiringTask")
+		fmt.Printf("Unable to AutoMigrate model(s) %s, %s. %s, %s to Postgres DB", "Person", "Task", "ExpiringTask", "PriorityTask")
 		panic(err)
 	}
 
@@ -58,7 +58,7 @@ func AutoMigrateAll() {
 // server update run on seperate thread via go routines
 func UpdateExpiringTask(expiringTasks []models.ExpiringTask) {
 	go updateExpiringTasksInDB(expiringTasks)
-	utils.UpdateExpiringTaskTimeLeft(expiringTasks)
+	models.UpdateExpiringTaskTimeLeft(expiringTasks)
 }
 
 // note, looping over twice and not a func to update each task
