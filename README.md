@@ -23,8 +23,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 - Getting a user returns their details and all of their tasks
 	- (Regular) tasks, expiring tasks, priority tasks, etc.
 - Swagger for documenting the endpoints
-	- ![Swagger1](./pictures/GGIDSwagger1.png)
-	- ![Swagger2](./pictures/GGIDSwagger2.png)
+![Swagger1](./pictures/GGIDSwagger1.png) ![Swagger2](./pictures/GGIDSwagger2.png)
 
 
 ## Justifications for Technology Stack
