@@ -29,16 +29,8 @@ getExpiringTasks                        |getPerson
 :--------------------------------------:|:----------------------------------------:
 ![Swagger1](./pictures/GGIDSwagger1.png)|![Swagger2](./pictures/GGIDSwagger2.png)
 
-![image alt >](./pictures/GGIDSwagger2.png)
-![image alt <](./pictures/GGIDSwagger1.png)
-
-img[alt$=">"] {
-  float: right;
-}
-
-img[alt$="<"] {
-  float: left;
-}
+<img style="float: left;" src="./pictures/GGIDSwagger1.png">
+<img style="float: right;" src="./pictures/GGIDSwagger2.png">
 
 
 ## Justifications for Technology Stack
