@@ -24,7 +24,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 	- (Regular) tasks, expiring tasks, priority tasks, etc.
 - Swagger for documenting the endpoints
 
-Solarized dark                            |  Solarized Ocean
+                           Swagger for documenting endpoints
 :----------------------------------------:|:----------------------------------------:
 ![Swagger1](./pictures/GGIDSwagger1.png)  | ![Swagger2](./pictures/GGIDSwagger2.png)
 
