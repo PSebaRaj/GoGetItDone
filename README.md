@@ -26,7 +26,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 - Swagger for documenting the endpoints
 
 getExpiringTasks                        |getPerson
-:--------------------------------------:|:----------------------------------------:
+:--------------------------------------:|:---------------------------------------:
 ![Swagger1](./pictures/GGIDSwagger1.png)|![Swagger2](./pictures/GGIDSwagger2.png)
 
 <img style="float: left;" src="./pictures/GGIDSwagger1.png">
