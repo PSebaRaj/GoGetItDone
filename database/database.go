@@ -17,7 +17,7 @@ var err error
 
 // connect to DB using GORM
 func Connect() *gorm.DB {
-	// Loading enviroment variables
+	// Loading environment variables
 	utils.LoadEnvVars()
 
 	// Setting environment variables
@@ -57,7 +57,7 @@ func AutoMigrateAll() {
 
 // update both the time left before sending to client
 // and update on server for accuracy
-// server update run on seperate thread via go routines
+// server update run on separate thread via go routines
 func UpdateExpiringTask(expiringTasks []models.ExpiringTask) {
 	go updateExpiringTasksInDB(expiringTasks)
 	models.UpdateExpiringTaskTimeLeft(expiringTasks)

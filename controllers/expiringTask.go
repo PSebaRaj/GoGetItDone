@@ -50,6 +50,7 @@ func GetExpiringTask(w http.ResponseWriter, r *http.Request) {
 	// Set element in the redis cache before returning the result
 	// "id" is what I query with
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTask)
 }
@@ -95,7 +96,7 @@ func GetExpiringTasks(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   201: ExpiringTask
-//   400: nil
+//   507: nil
 //
 // controller: create singular expiring task
 // res: created expiring task as JSON
@@ -107,7 +108,7 @@ func CreateExpiringTask(w http.ResponseWriter, r *http.Request) {
 	err := createdExpiringTask.Error
 	if err != nil {
 		fmt.Println(err)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInsufficientStorage)
 		return
 	}
 
@@ -115,7 +116,7 @@ func CreateExpiringTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&createdExpiringTask)
 }
 
-// swagger:route DELETE /delete/expiringtasks ExpiringTask deleteExpiringTask
+// swagger:route DELETE /delete/expiringtask/{id} ExpiringTask deleteExpiringTask
 //
 //
 // Produces:
@@ -156,6 +157,16 @@ func DeleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&expiringTask)
 }
 
+// swagger:route PATCH /complete/expiringtask/{id} ExpiringTask toggleExpiringTaskComplete
+//
+//
+// Produces:
+// - application/json
+//
+// responses:
+//   200: ExpiringTask
+//   404: nil
+//
 // controller: toggle complete boolean for an expiringTask
 // res: updated expiringTask with toggled completion status as JSON
 func ToggleCompleteExpiringTask(w http.ResponseWriter, r *http.Request) {
@@ -164,15 +175,35 @@ func ToggleCompleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 
 	// Ignore cache, go straight to DB
 	database.DB.First(&expiringTask, params["id"])
+	if expiringTask.Title == "" {
+		fmt.Printf("Error finding expiringTask %s before toggle", expiringTask.Title)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	database.ToggleTaskComplete(database.TYPE_EXPIRINGTASK, expiringTask.ID, expiringTask.Complete) // updates DB
 	expiringTask.Complete = !expiringTask.Complete                                                  // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTask)
 }
 
+// swagger:route PATCH /changetitle/expiringtask/{id} ExpiringTask changeExpiringTaskTitle
+//
+//
+// Produces:
+// - application/json
+//
+// Consumes:
+// - application/json
+//
+// responses:
+//   200: ExpiringTask
+//   404: nil
+//
 // controller: changes title of a expiring task
 // res: updated expiring task with new title as JSON
 func ChangeTitleExpiringTask(w http.ResponseWriter, r *http.Request) {
@@ -184,15 +215,35 @@ func ChangeTitleExpiringTask(w http.ResponseWriter, r *http.Request) {
 
 	// Ignore cache, go straight to DB
 	database.DB.First(&expiringTask, params["id"])
+	if expiringTask.Title == "" {
+		fmt.Printf("Error finding expiringTask %s before title change", expiringTask.Title)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	database.ChangeTaskTitle(database.TYPE_EXPIRINGTASK, expiringTask.ID, newTitle.Title) // updates DB
 	expiringTask.Title = newTitle.Title                                                   // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTask)
 }
 
+// swagger:route PATCH /changedescrition/expiringtask/{id} ExpiringTask changeExpiringTaskDescription
+//
+//
+// Produces:
+// - application/json
+//
+// Consumes:
+// - application/json
+//
+// responses:
+//   200: ExpiringTask
+//   404: nil
+//
 // controller: changes description of a expiring task
 // res: updated expiring task with new description as JSON
 func ChangeDescriptionExpiringTask(w http.ResponseWriter, r *http.Request) {
@@ -204,11 +255,18 @@ func ChangeDescriptionExpiringTask(w http.ResponseWriter, r *http.Request) {
 
 	// Ignore cache, go straight to DB
 	database.DB.First(&expiringTask, params["id"])
+	if expiringTask.Title == "" {
+		fmt.Printf("Error finding expiringTask %s before description change", expiringTask.Title)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	database.ChangeTaskDescription(database.TYPE_EXPIRINGTASK, expiringTask.ID, newDescription.Description) // updates DB
 	expiringTask.Description = newDescription.Description                                                   // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTask)
 }

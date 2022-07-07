@@ -1,4 +1,276 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  Duration:
+    description: |-
+      A Duration represents the elapsed time between two instants
+      as an int64 nanosecond count. The representation limits the
+      largest representable duration to approximately 290 years.
+    format: int64
+    type: integer
+    x-go-package: time
+  ExpiringTask:
+    properties:
+      Complete:
+        type: boolean
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        format: date-time
+        type: string
+      Description:
+        type: string
+      ExpiringAt:
+        format: date-time
+        type: string
+      ID:
+        format: uint64
+        type: integer
+      PersonID:
+        format: int64
+        type: integer
+      TimeLeft:
+        $ref: '#/definitions/Duration'
+      Title:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    type: object
+    x-go-package: github.com/psebaraj/gogetitdone/models
+  Person:
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        format: date-time
+        type: string
+      Email:
+        type: string
+      ExpiringTasks:
+        items:
+          $ref: '#/definitions/ExpiringTask'
+        type: array
+      ID:
+        format: uint64
+        type: integer
+      Name:
+        type: string
+      PriorityTasks:
+        items:
+          $ref: '#/definitions/PriorityTask'
+        type: array
+      Tasks:
+        items:
+          $ref: '#/definitions/Task'
+        type: array
+      UpdatedAt:
+        format: date-time
+        type: string
+    type: object
+    x-go-package: github.com/psebaraj/gogetitdone/models
+  PriorityLevelType:
+    format: uint64
+    type: integer
+    x-go-package: github.com/psebaraj/gogetitdone/models
+  PriorityTask:
+    properties:
+      Complete:
+        type: boolean
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        format: date-time
+        type: string
+      Description:
+        type: string
+      ID:
+        format: uint64
+        type: integer
+      PersonID:
+        format: int64
+        type: integer
+      PriorityLevel:
+        $ref: '#/definitions/PriorityLevelType'
+      Title:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    type: object
+    x-go-package: github.com/psebaraj/gogetitdone/models
+  Task:
+    properties:
+      Complete:
+        type: boolean
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        format: date-time
+        type: string
+      Description:
+        type: string
+      ID:
+        format: uint64
+        type: integer
+      PersonID:
+        format: int64
+        type: integer
+      Title:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    type: object
+    x-go-package: github.com/psebaraj/gogetitdone/models
+info:
+  description: Documentation of the GoGetItDone endpoints of the backend
+  title: GoGetItDone
+  version: 1.0.0
 paths:
+  /changedescrition/expiringtask/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeExpiringTaskDescription
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+  /changedescrition/prioritytask/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changePriorityTaskDescription
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /changedescrition/task/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeTaskDescription
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
+  /changetitle/expiringtask/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeExpiringTaskTitle
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+  /changetitle/prioritytask/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changePriorityTaskTitle
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /changetitle/task/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeTaskTitle
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
+  /complete/expiringtask/{id}:
+    patch:
+      operationId: toggleExpiringTaskComplete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+  /complete/prioritytask/{id}:
+    patch:
+      operationId: togglePriorityTaskComplete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /complete/task/{id}:
+    patch:
+      operationId: toggleTaskComplete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
   /create/expiringtask:
     post:
       consumes:
@@ -8,25 +280,123 @@ paths:
       - application/json
       responses:
         "201":
-          $ref: '#/responses/ExpiringTask'
-        "400":
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
+        "507":
           $ref: '#/responses/nil'
       tags:
       - ExpiringTask
-  /delete/expiringtasks:
+  /create/person:
+    post:
+      consumes:
+      - application/json
+      operationId: createPerson
+      produces:
+      - application/json
+      responses:
+        "201":
+          $ref: '#/responses/personResponse'
+        "507":
+          $ref: '#/responses/nil'
+      tags:
+      - Person
+  /create/prioritytask:
+    post:
+      consumes:
+      - application/json
+      operationId: createPriorityTask
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "400":
+          $ref: '#/responses/nil'
+        "507":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /create/task:
+    post:
+      consumes:
+      - application/json
+      operationId: createTask
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "507":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
+  /delete/expiringtask/{id}:
     delete:
       operationId: deleteExpiringTask
       produces:
       - application/json
       responses:
         "200":
-          $ref: '#/responses/ExpiringTask'
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
         "404":
           $ref: '#/responses/nil'
         "500":
           $ref: '#/responses/nil'
       tags:
       - ExpiringTask
+  /delete/person/{email}:
+    delete:
+      operationId: deletePerson
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/personResponse'
+        "404":
+          $ref: '#/responses/nil'
+        "500":
+          $ref: '#/responses/nil'
+      tags:
+      - Person
+  /delete/prioritytask/{id}:
+    delete:
+      operationId: deletePriorityTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "404":
+          $ref: '#/responses/nil'
+        "500":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /delete/task/{id}:
+    delete:
+      operationId: deleteTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "404":
+          $ref: '#/responses/nil'
+        "500":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
   /expiringtask/{id}:
     get:
       operationId: getExpiringTask
@@ -34,7 +404,9 @@ paths:
       - application/json
       responses:
         "200":
-          $ref: '#/responses/ExpiringTask'
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -46,9 +418,128 @@ paths:
       - application/json
       responses:
         "200":
-          $ref: '#/responses/ExpiringTask'
+          description: ExpiringTask
+          schema:
+            items:
+              $ref: '#/definitions/ExpiringTask'
+            type: array
         "204":
           $ref: '#/responses/nil'
       tags:
       - ExpiringTask
+  /people:
+    get:
+      operationId: getPeople
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/peopleResponse'
+        "204":
+          $ref: '#/responses/nil'
+      tags:
+      - Person
+  /person/{email}:
+    get:
+      operationId: getPerson
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/personResponse'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Person
+  /prioritytask/{id}:
+    get:
+      operationId: getPriorityTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /prioritytask/plevel/{id}/{new_level}:
+    patch:
+      operationId: changePriorityLevel
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "400":
+          $ref: '#/responses/nil'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /prioritytasks:
+    get:
+      operationId: getPriorityTasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            items:
+              $ref: '#/definitions/PriorityTask'
+            type: array
+        "204":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /task/{id}:
+    get:
+      operationId: getTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
+  /tasks:
+    get:
+      operationId: getTasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            items:
+              $ref: '#/definitions/Task'
+            type: array
+        "204":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
+produces:
+- application/json
+responses:
+  peopleResponse:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/Person'
+      type: array
+  personResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/Person'
+schemes:
+- http
 swagger: "2.0"
