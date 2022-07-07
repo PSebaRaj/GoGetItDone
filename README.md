@@ -29,9 +29,10 @@ getExpiringTasks                        |getPerson
 :--------------------------------------:|:---------------------------------------:
 ![Swagger1](./pictures/GGIDSwagger1.png)|![Swagger2](./pictures/GGIDSwagger2.png)
 
-<img style="float: left;" src="./pictures/GGIDSwagger1.png">
-<img style="float: right;" src="./pictures/GGIDSwagger2.png">
-
+<p float="left">
+  <img src="./pictures/GGIDSwagger1.png" width="100" />
+  <img src="./pictures/GGIDSwagger2.png" width="100" /> 
+</p>
 
 ## Justifications for Technology Stack
 ### Redis
