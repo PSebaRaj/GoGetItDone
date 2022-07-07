@@ -13,8 +13,17 @@ import (
 	"github.com/psebaraj/gogetitdone/models"
 )
 
+// swagger:route GET /expiringtask/{id} ExpiringTask getExpiringTask
+//
+//
+// Produces:
+// - application/json
+//
+// responses:
+//   200: ExpiringTask
+//   404: nil
+//
 // controller: get singular expiring task
-// res: one task as JSON
 func GetExpiringTask(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var expiringTask models.ExpiringTask
@@ -29,15 +38,32 @@ func GetExpiringTask(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Cache miss")
 	database.DB.First(&expiringTask, params["id"])
 
+	if expiringTask.Title == "" { // i.e. task not found
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(&expiringTask) // still want to send as json
+		return
+	}
+
 	// utils/clientLoading
 	expiringTask.TimeLeft = time.Duration(expiringTask.ExpiringAt.Sub(time.Now()).Minutes())
 
 	// Set element in the redis cache before returning the result
 	// "id" is what I query with
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTask)
 }
 
+// swagger:route GET /expiringtasks ExpiringTask getExpiringTasks
+//
+//
+// Produces:
+// - application/json
+//
+// responses:
+//   200: []ExpiringTask
+//   204: nil
+//
 // controller: get all expiring tasks
 // res: list of tasks as JSON
 func GetExpiringTasks(w http.ResponseWriter, r *http.Request) {
@@ -45,12 +71,32 @@ func GetExpiringTasks(w http.ResponseWriter, r *http.Request) {
 
 	database.DB.Find(&expiringTasks)
 
+	if len(expiringTasks) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		json.NewEncoder(w).Encode(&expiringTasks) // still want to send as json
+		return
+	}
+
 	database.UpdateExpiringTask(expiringTasks)
 	//models.UpdateExpiringTaskTimeLeft(expiringTasks)
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTasks)
 }
 
+// swagger:route POST /create/expiringtask ExpiringTask createExpiringTask
+//
+//
+// Produces:
+// - application/json
+//
+// Consumes:
+// - application/json
+//
+// responses:
+//   201: ExpiringTask
+//   400: nil
+//
 // controller: create singular expiring task
 // res: created expiring task as JSON
 func CreateExpiringTask(w http.ResponseWriter, r *http.Request) {
@@ -61,12 +107,25 @@ func CreateExpiringTask(w http.ResponseWriter, r *http.Request) {
 	err := createdExpiringTask.Error
 	if err != nil {
 		fmt.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(&createdExpiringTask)
 }
 
+// swagger:route DELETE /delete/expiringtasks ExpiringTask deleteExpiringTask
+//
+//
+// Produces:
+// - application/json
+//
+// responses:
+//   200: ExpiringTask
+//   404: nil
+//   500: nil
+//
 // controller: delete singular expiring task
 // res: deleted task as JSON
 func DeleteExpiringTask(w http.ResponseWriter, r *http.Request) {
@@ -75,17 +134,25 @@ func DeleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 	var expiringTask models.ExpiringTask
 
 	database.DB.First(&expiringTask, params["id"])
+	if expiringTask.Title == "" {
+		fmt.Printf("Error finding expiringTask %s before deletion", expiringTask.Title)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	deleted := database.DB.Delete(&expiringTask)
 
 	err := deleted.Error
 	if err != nil {
 		fmt.Printf("Error deleting expiringTask %s, error: %s", expiringTask.Title, err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	// also delete from cache
 	cache.DeleteFromCache(cache.REDIS, params["id"])
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTask)
 }
 

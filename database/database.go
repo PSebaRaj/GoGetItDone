@@ -12,9 +12,10 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-var DB *gorm.DB
+var DB *gorm.DB // global connection to DB
 var err error
 
+// connect to DB using GORM
 func Connect() *gorm.DB {
 	// Loading enviroment variables
 	utils.LoadEnvVars()
@@ -34,10 +35,11 @@ func Connect() *gorm.DB {
 	DB, err = gorm.Open(dialect, postgresURI)
 
 	if err != nil {
+		fmt.Println("Could not connect to the database")
 		panic(err)
-	} else {
-		fmt.Println("Connected to database successfully")
 	}
+
+	fmt.Println("Connected to database successfully")
 
 	return DB
 }
@@ -73,8 +75,9 @@ func updateExpiringTasksInDB(expiringTasks []models.ExpiringTask) {
 
 		err = DB.Exec(psqlStatement, expiringTasks[i].ID, time.Duration(expiringTasks[i].ExpiringAt.Sub(time.Now()).Minutes())).Error
 		if err != nil {
-			fmt.Printf("Error updating Expiring Task: %s", expiringTasks[i].Title)
-			panic(err)
+			fmt.Printf("Error updating Expiring Task: %s in DB", expiringTasks[i].Title)
+			panic(err) // panic here to stop this Go routine
+			// lazy error handling, I know
 		}
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/psebaraj/gogetitdone/cache"
 	"github.com/psebaraj/gogetitdone/database"
 	"github.com/psebaraj/gogetitdone/routes"
+	"github.com/psebaraj/gogetitdone/utils"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -25,6 +26,7 @@ func main() {
 	cache.ConnectRedisCache()
 
 	router := routes.NewRouter()
+	utils.LoadSwagger(router) // swagger found @ localhost:8080/docs
 
 	log.Fatal(http.ListenAndServe(":8080", routes.LoadCors(router)))
 }

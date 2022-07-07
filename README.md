@@ -8,9 +8,9 @@
 Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
 ## To-Do:
-- [ ] Error handling on concurrent processes
+- [x] Error handling on concurrent processes
 	- Namely UpdateExpiringTask (updates DB and JSON res)
-- [ ] Set/change cache expiration time for REDIS
+- [x] Set/change cache expiration time for REDIS
 - [ ] Use Prepare (Postgres) to cache PSQL statements for speed (v1.1)
 	- UpdateExpiringTask
 	- [GORM Doc 1](https://gorm.io/docs/performance.html)

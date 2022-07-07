@@ -16,7 +16,7 @@ type PriorityTask struct {
 	PriorityLevel PriorityLevelType
 }
 
-type PriorityLevelType int
+type PriorityLevelType uint
 
 const (
 	Undefined PriorityLevelType = iota
@@ -31,5 +31,5 @@ const (
 
 // write unit test for this
 func IsValidPriorityLevel(level PriorityLevelType) bool {
-	return int(level) < int(end)
+	return uint(level) < uint(end)
 }

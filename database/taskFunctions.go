@@ -6,6 +6,7 @@ import (
 	"github.com/psebaraj/gogetitdone/models"
 )
 
+// mapping between usable task types in Go & their table names in Postgres
 var TYPE_TASK string = "tasks"
 var TYPE_EXPIRINGTASK string = "expiring_tasks"
 var TYPE_PRIORITYTASK string = "priority_tasks"
@@ -14,7 +15,7 @@ var TYPE_PRIORITYTASK string = "priority_tasks"
 // Functions for all types of tasks
 //
 
-// toggles the complete boolean for any task type
+// internal: toggles the complete boolean for any task type
 func ToggleTaskComplete(taskType string, taskID uint, currState bool) {
 	psqlStatement := `
 	UPDATE %s
@@ -31,7 +32,7 @@ func ToggleTaskComplete(taskType string, taskID uint, currState bool) {
 
 }
 
-// changes title of any task
+// internal: changes title of any task
 func ChangeTaskTitle(taskType string, taskID uint, newTitle string) {
 	psqlStatement := `
 	UPDATE %s
@@ -48,7 +49,7 @@ func ChangeTaskTitle(taskType string, taskID uint, newTitle string) {
 
 }
 
-// changes description of any task
+// internal: changes description of any task
 func ChangeTaskDescription(taskType string, taskID uint, newDescription string) {
 	psqlStatement := `
 	UPDATE %s
@@ -69,6 +70,7 @@ func ChangeTaskDescription(taskType string, taskID uint, newDescription string) 
 // Functions for priority tasks
 //
 
+// internal: changes priority level (uint) of a priorityTask
 func ChangePriority(priorityTask models.PriorityTask, newPriorityLevel models.PriorityLevelType) {
 	psqlStatement := `
 	UPDATE priority_tasks

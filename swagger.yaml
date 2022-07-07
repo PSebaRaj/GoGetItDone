@@ -1,0 +1,54 @@
+paths:
+  /create/expiringtask:
+    post:
+      consumes:
+      - application/json
+      operationId: createExpiringTask
+      produces:
+      - application/json
+      responses:
+        "201":
+          $ref: '#/responses/ExpiringTask'
+        "400":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+  /delete/expiringtasks:
+    delete:
+      operationId: deleteExpiringTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/ExpiringTask'
+        "404":
+          $ref: '#/responses/nil'
+        "500":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+  /expiringtask/{id}:
+    get:
+      operationId: getExpiringTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/ExpiringTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+  /expiringtasks:
+    get:
+      operationId: getExpiringTasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          $ref: '#/responses/ExpiringTask'
+        "204":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+swagger: "2.0"
