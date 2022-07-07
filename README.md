@@ -29,6 +29,18 @@ getExpiringTasks                        |getPerson
 :--------------------------------------:|:----------------------------------------:
 ![Swagger1](./pictures/GGIDSwagger1.png)|![Swagger2](./pictures/GGIDSwagger2.png)
 
+![image alt >](./pictures/GGIDSwagger2.png)
+![image alt <](./pictures/GGIDSwagger1.png)
+
+img[alt$=">"] {
+  float: right;
+}
+
+img[alt$="<"] {
+  float: left;
+}
+
+
 ## Justifications for Technology Stack
 ### Redis
 - Redis is used to cache tasks
