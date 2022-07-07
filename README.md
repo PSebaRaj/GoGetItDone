@@ -1,9 +1,9 @@
 # GoGetItDone
 [![Latest Release](https://img.shields.io/github/release/psebaraj/gogetitdone.svg?style=for-the-badge)](https://github.com/psebaraj/gogetitdone/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](/LICENSE)
-[![Build Status](https://github.com/PSebaRaj/GoGetItDone/actions/workflows/go.yml/badge.svg?style=for-the-badge)](https://github.com/PSebaRaj/GoGetItDone/actions/workflows/go.yml)
-[![Lines of Code](https://img.shields.io/tokei/lines/github/psebaraj/gogetitdone?style=for-the-badge)](https://github.com/psebaraj/gogetitdone/actions)
+[![Build Status](https://img.shields.io/github/workflow/status/psebaraj/gogetitdone/Go?style=for-the-badge)](https://github.com/PSebaRaj/GoGetItDone/actions/workflows/go.yml)
 [![Go ReportCard](https://goreportcard.com/badge/github.com/psebaraj/gogetitdone?style=for-the-badge)](https://goreportcard.com/report/psebaraj/gogetitdone)
+[![Lines of Code](https://img.shields.io/tokei/lines/github/psebaraj/gogetitdone?style=for-the-badge)](https://github.com/psebaraj/gogetitdone/actions)
 
 Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
