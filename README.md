@@ -35,8 +35,8 @@ getExpiringTasks                  |  getPerson
 
 
 <p float="left">
-  <img src="./pictures/GGIDSwagger1.png" width="1/2" />
-  <img src="./pictures/GGIDSwagger2.png" width="1/2" /> 
+  <img src="./pictures/GGIDSwagger1.png" width="500" />
+  <img src="./pictures/GGIDSwagger2.png" width="500" /> 
 </p>
 
 ## Justifications for Technology Stack
