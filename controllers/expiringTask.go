@@ -165,6 +165,7 @@ func DeleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: ExpiringTask
+//   400: nil
 //   404: nil
 //
 // controller: toggle complete boolean for an expiringTask
@@ -181,8 +182,13 @@ func ToggleCompleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ToggleTaskComplete(database.TYPE_EXPIRINGTASK, expiringTask.ID, expiringTask.Complete) // updates DB
-	expiringTask.Complete = !expiringTask.Complete                                                  // updates response
+	_, err := database.ToggleTaskComplete(database.TYPE_EXPIRINGTASK, expiringTask.ID, expiringTask.Complete) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	expiringTask.Complete = !expiringTask.Complete // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
@@ -202,6 +208,7 @@ func ToggleCompleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: ExpiringTask
+//   400: nil
 //   404: nil
 //
 // controller: changes title of a expiring task
@@ -221,8 +228,13 @@ func ChangeTitleExpiringTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ChangeTaskTitle(database.TYPE_EXPIRINGTASK, expiringTask.ID, newTitle.Title) // updates DB
-	expiringTask.Title = newTitle.Title                                                   // updates response
+	_, err := database.ChangeTaskTitle(database.TYPE_EXPIRINGTASK, expiringTask.ID, newTitle.Title) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	expiringTask.Title = newTitle.Title // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
@@ -242,6 +254,7 @@ func ChangeTitleExpiringTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: ExpiringTask
+//   400: nil
 //   404: nil
 //
 // controller: changes description of a expiring task
@@ -261,8 +274,13 @@ func ChangeDescriptionExpiringTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ChangeTaskDescription(database.TYPE_EXPIRINGTASK, expiringTask.ID, newDescription.Description) // updates DB
-	expiringTask.Description = newDescription.Description                                                   // updates response
+	_, err := database.ChangeTaskDescription(database.TYPE_EXPIRINGTASK, expiringTask.ID, newDescription.Description) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	expiringTask.Description = newDescription.Description // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)

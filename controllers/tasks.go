@@ -158,6 +158,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: Task
+//   400: nil
 //   404: nil
 //
 // controller: toggle complete boolean for a (regular) task
@@ -174,8 +175,13 @@ func ToggleCompleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ToggleTaskComplete(database.TYPE_TASK, task.ID, task.Complete) // updates DB
-	task.Complete = !task.Complete                                          // updates response
+	_, err := database.ToggleTaskComplete(database.TYPE_TASK, task.ID, task.Complete) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	task.Complete = !task.Complete // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], task)
@@ -195,6 +201,7 @@ func ToggleCompleteTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: Task
+//   400: nil
 //   404: nil
 //
 // controller: changes title of a (regular) task
@@ -214,8 +221,13 @@ func ChangeTitleTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ChangeTaskTitle(database.TYPE_TASK, task.ID, newTitle.Title) // updates DB
-	task.Title = newTitle.Title                                           // updates response
+	_, err := database.ChangeTaskTitle(database.TYPE_TASK, task.ID, newTitle.Title) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	task.Title = newTitle.Title // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], task)
@@ -235,6 +247,7 @@ func ChangeTitleTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: Task
+//   400: nil
 //   404: nil
 //
 // controller: changes description of a (regular) task
@@ -254,8 +267,13 @@ func ChangeDescriptionTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ChangeTaskDescription(database.TYPE_TASK, task.ID, newDescription.Description) // updates DB
-	task.Description = newDescription.Description                                           // updates response
+	_, err := database.ChangeTaskDescription(database.TYPE_TASK, task.ID, newDescription.Description) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	task.Description = newDescription.Description // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], task)

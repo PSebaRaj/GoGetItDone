@@ -8,26 +8,25 @@
 Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
 ## To-Do:
-- [x] Error handling
+- [x] Better error handling
 	- [x] Concurrent processes, namely UpdateExpiringTask (updates DB and JSON res)
 	- [x] Redis [functions](https://github.com/PSebaRaj/GoGetItDone/blob/main/cache/cache.go)
-- [ ] Unit tests
-- [ ] Use Prepare (Postgres) to cache PSQL statements for speed (v1.1)
-	- UpdateExpiringTask
-	- [GORM Doc 1](https://gorm.io/docs/performance.html)
-	- [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)
-- [ ] Refactor tasks with interfaces (v1.1)
+- [x] Unit tests
+- [ ] Use Prepare (Postgres) to cache PSQL statements for speed (v1.1.0)
+	- UpdateExpiringTask and /database/taskFunctions.go
+	- [GORM Doc 1](https://gorm.io/docs/performance.html) and [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)
+- [ ] Refactor tasks with interfaces (v1.1.0)
 
 ## Features
 - Getting an expiring task will return the expiration time in the local time zone of the origin of the request
 	- Give expiry time for expiring tasks in GMT for consistency
 - Getting a user returns their details and all of their tasks
 	- (Regular) tasks, expiring tasks, priority tasks, etc.
-- Swagger for documenting the endpoints
+- Swagger endpoint documentation
 
-getExpiringTasks                          | getPerson
-:----------------------------------------:|:----------------------------------------:
-![Swagger1](./pictures/GGIDSwagger1.png)  | ![Swagger2](./pictures/GGIDSwagger2.png)
+getExpiringTasks                        |getPerson
+:--------------------------------------:|:--------------------------------------:
+![Swagger1](./pictures/GGIDSwagger1.png)|![Swagger2](./pictures/GGIDSwagger2.png)
 
 ## Justifications for Technology Stack
 ### Redis

@@ -170,6 +170,7 @@ func DeletePriorityTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: PriorityTask
+//   400: nil
 //   404: nil
 //
 // controller: toggle complete boolean for a priorityTask
@@ -186,8 +187,13 @@ func ToggleCompletePriorityTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ToggleTaskComplete(database.TYPE_PRIORITYTASK, priorityTask.ID, priorityTask.Complete) // updates DB
-	priorityTask.Complete = !priorityTask.Complete                                                  // updates response
+	_, err := database.ToggleTaskComplete(database.TYPE_PRIORITYTASK, priorityTask.ID, priorityTask.Complete) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	priorityTask.Complete = !priorityTask.Complete // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
@@ -214,7 +220,7 @@ func ChangePriorityLevel(w http.ResponseWriter, r *http.Request) {
 	var priorityTask models.PriorityTask
 
 	plevel, err := strconv.Atoi(params["plevel"])
-	if err != nil {
+	if err != nil || plevel < 0 {
 		fmt.Printf("Invalid priority level")
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -250,6 +256,7 @@ func ChangePriorityLevel(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: PriorityTask
+//   400: nil
 //   404: nil
 //
 // controller: changes title of a priority task
@@ -269,8 +276,13 @@ func ChangeTitlePriorityTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ChangeTaskTitle(database.TYPE_PRIORITYTASK, priorityTask.ID, newTitle.Title) // updates DB
-	priorityTask.Title = newTitle.Title                                                   // updates response
+	_, err := database.ChangeTaskTitle(database.TYPE_PRIORITYTASK, priorityTask.ID, newTitle.Title) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	priorityTask.Title = newTitle.Title // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
@@ -290,6 +302,7 @@ func ChangeTitlePriorityTask(w http.ResponseWriter, r *http.Request) {
 //
 // responses:
 //   200: PriorityTask
+//   400: nil
 //   404: nil
 //
 // controller: changes description of a priority task
@@ -309,8 +322,13 @@ func ChangeDescriptionPriorityTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.ChangeTaskDescription(database.TYPE_PRIORITYTASK, priorityTask.ID, newDescription.Description) // updates DB
-	priorityTask.Description = newDescription.Description                                                   // updates response
+	_, err := database.ChangeTaskDescription(database.TYPE_PRIORITYTASK, priorityTask.ID, newDescription.Description) // updates DB
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	priorityTask.Description = newDescription.Description // updates response
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
