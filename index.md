@@ -15,5 +15,6 @@ As of right now, only the backend (server and cache) is complete. A friend has a
 - Go
 - Gorilla Mux
 - PostgreSQL
+
 #### Cache
 - Redis
