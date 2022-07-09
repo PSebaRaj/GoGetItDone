@@ -1,37 +1,19 @@
-## Welcome to GitHub Pages
+## GoGetItDone - Github Pages
+[![Latest Release](https://img.shields.io/github/release/psebaraj/gogetitdone.svg?style=for-the-badge)](https://github.com/psebaraj/gogetitdone/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](/LICENSE)
+[![Build Status](https://img.shields.io/github/workflow/status/psebaraj/gogetitdone/Go?style=for-the-badge)](https://github.com/PSebaRaj/GoGetItDone/actions/workflows/go.yml)
+[![Go ReportCard](https://goreportcard.com/badge/github.com/psebaraj/gogetitdone?style=for-the-badge)](https://goreportcard.com/report/psebaraj/gogetitdone)
 
-You can use the [editor on GitHub](https://github.com/PSebaRaj/GoGetItDone/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Backend of a to-do app. Created because I don't want to pay for Todoist Premium (and there are some missing features surrounding collaboration that I really want).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Written in Go and utilizes Redis for caching and PostgreSQL for long-term storage. Currently on v1.0.0, which implements users (people) and three different types of tasks. Currently in development, v1.1.0 will include refactored tasks, as well as two new features (projects, which are groups of tasks, and groups, which are collections of users that can share tasks). More information about v1.1.0 can be found [here](https://github.com/PSebaRaj/GoGetItDone/blob/main/README.md#to-do).
 
-### Markdown
+As of right now, only the backend (server and cache) is complete. A friend has agreed to create the client, and to make it as painless as possible, I have documented all of the endpoints with Swagger.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/PSebaRaj/GoGetItDone/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+### Languages, Technologies, and Frameworks
+#### Server
+- Go
+- Gorilla Mux
+- PostgreSQL
+#### Cache
+- Redis
