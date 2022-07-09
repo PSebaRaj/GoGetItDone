@@ -17,6 +17,12 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 	- [GORM Doc 1](https://gorm.io/docs/performance.html) and [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)
 - [ ] Refactor tasks with interfaces (v1.1.0)
 
+### New Features for v1.1.0:
+- [ ] Projects: collection(s) of (all types of) tasks owned by a person
+	- Different "projects" for tasks from courses, work, etc.
+- [ ] Groups: collection(s) of people where users can share tasks
+	- One "group" for family members, another "group" for work colleagues, etc.
+
 ## Features
 - Getting an expiring task will return the expiration time in the local time zone of the origin of the request
 	- Give expiry time for expiring tasks in GMT for consistency

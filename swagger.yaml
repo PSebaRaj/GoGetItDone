@@ -145,6 +145,8 @@ paths:
           description: ExpiringTask
           schema:
             $ref: '#/definitions/ExpiringTask'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -161,6 +163,8 @@ paths:
           description: PriorityTask
           schema:
             $ref: '#/definitions/PriorityTask'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -177,6 +181,8 @@ paths:
           description: Task
           schema:
             $ref: '#/definitions/Task'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -193,6 +199,8 @@ paths:
           description: ExpiringTask
           schema:
             $ref: '#/definitions/ExpiringTask'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -209,6 +217,8 @@ paths:
           description: PriorityTask
           schema:
             $ref: '#/definitions/PriorityTask'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -225,6 +235,8 @@ paths:
           description: Task
           schema:
             $ref: '#/definitions/Task'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -239,6 +251,8 @@ paths:
           description: ExpiringTask
           schema:
             $ref: '#/definitions/ExpiringTask'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -253,6 +267,8 @@ paths:
           description: PriorityTask
           schema:
             $ref: '#/definitions/PriorityTask'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -267,6 +283,8 @@ paths:
           description: Task
           schema:
             $ref: '#/definitions/Task'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:

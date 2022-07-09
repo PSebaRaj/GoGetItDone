@@ -29,4 +29,5 @@ func main() {
 	utils.LoadSwagger(router) // swagger found @ localhost:8080/docs
 
 	log.Fatal(http.ListenAndServe(":8080", routes.LoadCors(router)))
+
 }
