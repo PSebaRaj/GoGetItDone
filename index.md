@@ -20,4 +20,3 @@ As of right now, only the backend (server and cache) is complete. A friend has a
 - Redis
 
 
-Why tabbed.
