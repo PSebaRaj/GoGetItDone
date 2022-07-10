@@ -23,10 +23,10 @@ services:
     networks:
       - fullstack
 
-
   gogetitdone:
     build: .
     container_name: "gogetitdone"
+    environment:
       DB_USER: "psebaraj"
       DB_PASSWORD: "abc123"
       DB_DIALECT: "postgres"
@@ -43,11 +43,9 @@ services:
     networks:
       - fullstack
 
+volumes:
+  database_postgres:
 
-  volumes:
-    database_postgres
-
-
-  networks:
-    fullstack:
-      driver: bridge
+networks:
+  fullstack:
+    driver: bridge
