@@ -19,7 +19,7 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
-    container_name: redis_cache
+    container_name: "cache"
     networks:
       - fullstack
 
@@ -30,9 +30,9 @@ services:
       DB_USER: "psebaraj"
       DB_PASSWORD: "abc123"
       DB_DIALECT: "postgres"
-      DB_HOST: "localhost"
+      DB_HOST: "db"
       DB_PORT: "5432"
-      REDIS_HOST: "localhost"
+      REDIS_HOST: "redis-cache"
       REDIS_PORT: "6379"
       REDIS_PASSWORD: "0"
     ports:
