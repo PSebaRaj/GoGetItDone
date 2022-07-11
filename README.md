@@ -11,14 +11,16 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 - [x] Better error handling
 	- [x] Concurrent processes, namely UpdateExpiringTask (updates DB and JSON res)
 	- [x] Redis [functions](https://github.com/PSebaRaj/GoGetItDone/blob/main/cache/cache.go)
-- [x] Unit tests
 - [ ] Use Prepare (Postgres) to cache PSQL statements for speed (v1.1.0)
 	- UpdateExpiringTask and /database/taskFunctions.go
 	- [GORM Doc 1](https://gorm.io/docs/performance.html) and [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)
 - [ ] Refactor tasks with interfaces (v1.1.0)
+	- Common methods for all tasks: Change Title, Change Description, Toggle Complete
+	- Create "Reassign Task from Project" function
+- [ ] Refactor codebase to adhere to standard [Go project layout](https://github.com/golang-standards/project-layout)
 
 ### New Features for v1.1.0:
-- [ ] Projects: collection(s) of (all types of) tasks owned by a person
+- [x] Projects: collection(s) of (all types of) tasks owned by a person
 	- Different "projects" for tasks from courses, work, etc.
 - [ ] Groups: collection(s) of people where users can share tasks
 	- One "group" for family members, another "group" for work colleagues, etc.

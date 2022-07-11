@@ -10,6 +10,7 @@ func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	peopleRoutes(router)
+	projectRoutes(router)
 	taskRoutes(router)
 	expiringTaskRoutes(router)
 	priorityTaskRoutes(router)
@@ -23,6 +24,14 @@ func peopleRoutes(router *mux.Router) {
 	router.HandleFunc("/person/{email}", controllers.GetPerson).Methods("GET")
 	router.HandleFunc("/create/person", controllers.CreatePerson).Methods("POST")
 	router.HandleFunc("/delete/person/{email}", controllers.DeletePerson).Methods("DELETE")
+}
+
+// project routes
+func projectRoutes(router *mux.Router) {
+	router.HandleFunc("/project/{id}", controllers.GetProject).Methods("GET")
+	router.HandleFunc("/projects/{email}", controllers.GetProjectsByPerson).Methods("GET")
+	router.HandleFunc("/create/project", controllers.CreateProject).Methods("POST")
+	router.HandleFunc("/delete/project/{id}", controllers.DeleteProject).Methods("DELETE")
 }
 
 // (regular) task routes

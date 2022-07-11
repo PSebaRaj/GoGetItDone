@@ -41,6 +41,8 @@ type personResponse struct {
 func GetPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var person models.Person
+
+	var projects []models.Project
 	var tasks []models.Task
 	var expiringTasks []models.ExpiringTask
 	var priorityTasks []models.PriorityTask
@@ -52,6 +54,7 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	database.DB.Model(&person).Related(&projects)
 	database.DB.Model(&person).Related(&tasks)
 	database.DB.Model(&person).Related(&expiringTasks)
 	database.DB.Model(&person).Related(&priorityTasks)
@@ -60,6 +63,7 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 	database.UpdateExpiringTask(expiringTasks)
 	//models.UpdateExpiringTaskTimeLeft(expiringTasks)
 
+	person.Projects = projects
 	person.Tasks = tasks
 	person.ExpiringTasks = expiringTasks
 	person.PriorityTasks = priorityTasks

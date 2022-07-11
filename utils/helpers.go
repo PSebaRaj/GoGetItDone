@@ -18,10 +18,12 @@ func LoadEnvVars() {
 	}
 }
 
+// Loading swagger into /docs
 func LoadSwagger(r *mux.Router) {
-	// swagger
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
 	sh := middleware.Redoc(opts, nil)
+
+	fmt.Println("Swagger can be found /docs")
 
 	r.Handle("/docs", sh)
 	r.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))

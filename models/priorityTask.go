@@ -11,7 +11,9 @@ type PriorityTask struct {
 	Title       string
 	Description string
 	Complete    bool
-	PersonID    int
+
+	PersonID  int
+	ProjectID int
 
 	PriorityLevel PriorityLevelType
 }

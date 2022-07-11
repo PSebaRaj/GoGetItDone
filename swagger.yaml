@@ -31,6 +31,9 @@ definitions:
       PersonID:
         format: int64
         type: integer
+      ProjectID:
+        format: int64
+        type: integer
       TimeLeft:
         $ref: '#/definitions/Duration'
       Title:
@@ -62,6 +65,10 @@ definitions:
       PriorityTasks:
         items:
           $ref: '#/definitions/PriorityTask'
+        type: array
+      Projects:
+        items:
+          $ref: '#/definitions/Project'
         type: array
       Tasks:
         items:
@@ -96,6 +103,42 @@ definitions:
         type: integer
       PriorityLevel:
         $ref: '#/definitions/PriorityLevelType'
+      ProjectID:
+        format: int64
+        type: integer
+      Title:
+        type: string
+      UpdatedAt:
+        format: date-time
+        type: string
+    type: object
+    x-go-package: github.com/psebaraj/gogetitdone/models
+  Project:
+    properties:
+      CreatedAt:
+        format: date-time
+        type: string
+      DeletedAt:
+        format: date-time
+        type: string
+      ExpiringTasks:
+        items:
+          $ref: '#/definitions/ExpiringTask'
+        type: array
+      ID:
+        format: uint64
+        type: integer
+      PersonID:
+        format: int64
+        type: integer
+      PriorityTasks:
+        items:
+          $ref: '#/definitions/PriorityTask'
+        type: array
+      Tasks:
+        items:
+          $ref: '#/definitions/Task'
+        type: array
       Title:
         type: string
       UpdatedAt:
@@ -119,6 +162,9 @@ definitions:
         format: uint64
         type: integer
       PersonID:
+        format: int64
+        type: integer
+      ProjectID:
         format: int64
         type: integer
       Title:
@@ -337,6 +383,22 @@ paths:
           $ref: '#/responses/nil'
       tags:
       - PriorityTask
+  /create/project:
+    post:
+      consumes:
+      - application/json
+      operationId: createProject
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Project
+          schema:
+            $ref: '#/definitions/Project'
+        "507":
+          $ref: '#/responses/nil'
+      tags:
+      - Project
   /create/task:
     post:
       consumes:
@@ -399,6 +461,22 @@ paths:
           $ref: '#/responses/nil'
       tags:
       - PriorityTask
+  /delete/project/{id}:
+    delete:
+      operationId: deleteProject
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Project
+          schema:
+            $ref: '#/definitions/Project'
+        "404":
+          $ref: '#/responses/nil'
+        "500":
+          $ref: '#/responses/nil'
+      tags:
+      - Project
   /delete/task/{id}:
     delete:
       operationId: deleteTask
@@ -515,6 +593,38 @@ paths:
           $ref: '#/responses/nil'
       tags:
       - PriorityTask
+  /project/{id}:
+    get:
+      operationId: getProject
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Project
+          schema:
+            $ref: '#/definitions/Project'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Project
+  /projects/{email}:
+    get:
+      operationId: getProjects
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Project
+          schema:
+            items:
+              $ref: '#/definitions/Project'
+            type: array
+        "204":
+          $ref: '#/responses/nil'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Project
   /task/{id}:
     get:
       operationId: getTask

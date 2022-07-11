@@ -10,6 +10,7 @@ type Person struct {
 
 	Name          string
 	Email         string `gorm:"typevarchar(100);unique_index"`
+	Projects      []Project
 	Tasks         []Task
 	ExpiringTasks []ExpiringTask
 	PriorityTasks []PriorityTask

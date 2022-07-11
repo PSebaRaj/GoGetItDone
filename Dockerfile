@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:latest-alpine:latest
 
 LABEL maintainer="psebaraj <patrick.sebaraj@gmail.com>"
 
@@ -12,7 +12,7 @@ RUN go mod download
 
 COPY . .
 
-ENV PORT 8080
+EXPOSE 8080
 
 RUN go build
 

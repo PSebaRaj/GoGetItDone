@@ -11,7 +11,9 @@ type Task struct {
 	Title       string
 	Description string
 	Complete    bool
-	PersonID    int
+
+	PersonID  int
+	ProjectID int
 }
 
 type TaskModifier struct {

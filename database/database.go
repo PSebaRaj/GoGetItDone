@@ -47,9 +47,9 @@ func Connect() *gorm.DB {
 // Make migrations to the database if they haven't been made already
 func AutoMigrateAll() {
 
-	err = DB.AutoMigrate(&models.Person{}, &models.Task{}, &models.ExpiringTask{}, &models.PriorityTask{}).Error
+	err = DB.AutoMigrate(&models.Person{}, &models.Project{}, &models.Task{}, &models.ExpiringTask{}, &models.PriorityTask{}).Error
 	if err != nil {
-		fmt.Printf("Unable to AutoMigrate model(s) %s, %s. %s, %s to Postgres DB", "Person", "Task", "ExpiringTask", "PriorityTask")
+		fmt.Printf("Unable to AutoMigrate model(s) %s, %s, %s, %s, %s to Postgres DB", "Person", "Project", "Task", "ExpiringTask", "PriorityTask")
 		panic(err)
 	}
 

@@ -13,7 +13,9 @@ type ExpiringTask struct {
 	Title       string
 	Description string
 	Complete    bool
-	PersonID    int
+
+	PersonID  int
+	ProjectID int
 
 	ExpiringAt time.Time
 	TimeLeft   time.Duration
