@@ -44,6 +44,7 @@ func taskRoutes(router *mux.Router) {
 
 	router.HandleFunc("/changetitle/task/{id}", controllers.ChangeTitleTask).Methods("PATCH")
 	router.HandleFunc("/changedescription/task/{id}", controllers.ChangeDescriptionTask).Methods("PATCH")
+	router.HandleFunc("/changeproject/task/{id}", controllers.ChangeProjectTask).Methods("PATCH")
 }
 
 // expiring task routes
@@ -56,6 +57,7 @@ func expiringTaskRoutes(router *mux.Router) {
 
 	router.HandleFunc("/changetitle/expiringtask/{id}", controllers.ChangeTitleExpiringTask).Methods("PATCH")
 	router.HandleFunc("/changedescription/expiringtask/{id}", controllers.ChangeDescriptionExpiringTask).Methods("PATCH")
+	router.HandleFunc("/changeproject/expiringtask/{id}", controllers.ChangeProjectExpiringTask).Methods("PATCH")
 }
 
 // priority task routes
@@ -69,4 +71,5 @@ func priorityTaskRoutes(router *mux.Router) {
 
 	router.HandleFunc("/changetitle/prioritytask/{id}", controllers.ChangeTitlePriorityTask).Methods("PATCH")
 	router.HandleFunc("/changedescription/prioritytask/{id}", controllers.ChangeDescriptionPriorityTask).Methods("PATCH")
+	router.HandleFunc("/changeproject/prioritytask/{id}", controllers.ChangeProjectPriorityTask).Methods("PATCH")
 }

@@ -3,9 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/psebaraj/gogetitdone/cache"
 	"github.com/psebaraj/gogetitdone/database"
 	"github.com/psebaraj/gogetitdone/models"
 )
@@ -28,6 +30,15 @@ func GetProject(w http.ResponseWriter, r *http.Request) {
 	var tasks []models.Task
 	var expiringTasks []models.ExpiringTask
 	var priorityTasks []models.PriorityTask
+
+	// If the element is found in the redis cache, directly return it
+	res := cache.GetFromCache(cache.REDIS, params["id"])
+	if res != nil {
+		fmt.Println("Cache hit")
+		io.WriteString(w, res.(string))
+		return
+	}
+	fmt.Println("Cache miss")
 
 	database.DB.First(&project, "id = ?", params["id"])
 	if project.Title == "" { // i.e. project not found
@@ -150,6 +161,9 @@ func DeleteProject(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	// also delete from cache
+	cache.DeleteFromCache(cache.REDIS, params["id"])
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&project)

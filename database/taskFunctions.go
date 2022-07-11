@@ -103,6 +103,31 @@ func ChangeTaskDescription(taskType string, taskID uint, newDescription string) 
 	return newDescription, nil
 }
 
+// internal: changes assigned project of any task
+func ChangeTaskProject(taskType string, taskID uint, newProjectID int) (int, error) {
+	psqlStatement := `
+	UPDATE %s
+	SET project_id = $2
+	WHERE id = $1;`
+
+	if !isValidTaskType(taskType) {
+		fmt.Printf("Error, %s is not a valid task type", taskType)
+		fmt.Println("Valid types: ", allTaskTypes)
+		return -1, errors.New("Invalid type")
+	}
+
+	changeStatement := fmt.Sprintf(psqlStatement, taskType)
+
+	err = DB.Exec(changeStatement, taskID, newProjectID).Error
+	if err != nil {
+		fmt.Printf("Error changing project of %s #%d to #%d", taskType, taskID, newProjectID)
+		return newProjectID, err
+		//panic(err)
+	}
+
+	return newProjectID, nil
+}
+
 //
 // Functions for priority tasks
 //

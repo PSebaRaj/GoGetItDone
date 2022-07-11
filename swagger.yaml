@@ -233,6 +233,60 @@ paths:
           $ref: '#/responses/nil'
       tags:
       - Task
+  /changeproject/expiringtask/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeExpiringTaskProject
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
+        "400":
+          $ref: '#/responses/nil'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
+  /changeproject/prioritytask/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changePriorityTaskProject
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "400":
+          $ref: '#/responses/nil'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /changeproject/task/{id}:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeTaskProject
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "400":
+          $ref: '#/responses/nil'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
   /changetitle/expiringtask/{id}:
     patch:
       consumes:

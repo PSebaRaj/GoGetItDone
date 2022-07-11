@@ -15,8 +15,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 	- UpdateExpiringTask and /database/taskFunctions.go
 	- [GORM Doc 1](https://gorm.io/docs/performance.html) and [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)
 - [ ] Refactor tasks with interfaces (v1.1.0)
-	- Common methods for all tasks: Change Title, Change Description, Toggle Complete
-	- Create "Reassign Task from Project" function
+	- Common methods for all tasks: Change Title, Change Description, Toggle Complete, Change Project
 - [ ] Refactor codebase to adhere to standard [Go project layout](https://github.com/golang-standards/project-layout)
 
 ### New Features for v1.1.0:

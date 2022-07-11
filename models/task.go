@@ -19,4 +19,5 @@ type Task struct {
 type TaskModifier struct {
 	Title       string `json`
 	Description string `json`
+	ProjectID   int    `json`
 }
