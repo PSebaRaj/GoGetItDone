@@ -11,7 +11,7 @@ Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 - [x] Better error handling
 	- [x] Concurrent processes, namely UpdateExpiringTask (updates DB and JSON res)
 	- [x] Redis [functions](https://github.com/PSebaRaj/GoGetItDone/blob/main/cache/cache.go)
-- [ ] Use Prepare (Postgres) to cache PSQL statements for speed (v1.1.0)
+- [x] Use Prepare (Postgres) to cache PSQL statements for speed (v1.1.0)
 	- UpdateExpiringTask and /database/taskFunctions.go
 	- [GORM Doc 1](https://gorm.io/docs/performance.html) and [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)
 - [ ] Refactor tasks with interfaces (v1.1.0)

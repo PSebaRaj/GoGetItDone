@@ -34,6 +34,13 @@ func Connect() *gorm.DB {
 	// Openning connection to database
 	DB, err = gorm.Open(dialect, postgresURI)
 
+	/*** PREPARE STMT
+	DB, err = gorm.Open(postgres.Open(postgresURI), &gorm.Config{
+		PrepareStmt: true,
+	})
+	***/
+
+
 	if err != nil {
 		fmt.Println("Could not connect to the database")
 		panic(err)
