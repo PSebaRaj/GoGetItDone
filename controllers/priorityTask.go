@@ -245,7 +245,8 @@ func ChangePriorityLevel(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// swagger:route PATCH /changetitle/prioritytask/{id} PriorityTask changePriorityTaskTitle
+
+// swagger:route PATCH /prioritytask/{id}?change=change PriorityTask changePriorityTask
 //
 //
 // Produces:
@@ -259,30 +260,57 @@ func ChangePriorityLevel(w http.ResponseWriter, r *http.Request) {
 //   400: nil
 //   404: nil
 //
-// controller: changes title of a priority task
+// controller: changes either title, description, or projectID of a priority task
 // res: updated priority task with new title as JSON
-func ChangeTitlePriorityTask(w http.ResponseWriter, r *http.Request) {
-	var newTitle models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newTitle)
+func ChangePriorityTaskX(w http.ResponseWriter, r *http.Request) {
+	var newModifier models.TaskModifier
+	queries := r.URL.Query()
+	json.NewDecoder(r.Body).Decode(&newModifier)
 
 	params := mux.Vars(r)
 	var priorityTask models.PriorityTask
 
 	// Ignore cache, go straight to DB
 	database.DB.First(&priorityTask, params["id"])
-	if priorityTask.Title == "" {
-		fmt.Printf("Error finding priorityTask %s before title change", priorityTask.Title)
+	if (priorityTask == models.PriorityTask{}) {
+		fmt.Println("Error finding priorityTask before change")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	_, err := database.ChangeTaskTitle(database.TYPE_PRIORITYTASK, priorityTask.ID, newTitle.Title) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	// change can be "title", "description", or "ProjectID"
+	switch queries.Get("change") {
+		case "title":
+			_, err := database.ChangeTaskTitle(database.TYPE_PRIORITYTASK, priorityTask.ID, newModifier.Title) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 
-	priorityTask.Title = newTitle.Title // updates response
+			priorityTask.Title = newModifier.Title // updates response
+
+		case "description":
+			_, err := database.ChangeTaskDescription(database.TYPE_PRIORITYTASK, priorityTask.ID, newModifier.Description) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			priorityTask.Description = newModifier.Description // updates response
+
+		case "ProjectID":
+			_, err := database.ChangeTaskProject(database.TYPE_PRIORITYTASK, priorityTask.ID, newModifier.ProjectID) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			priorityTask.ProjectID = newModifier.ProjectID // updates response
+
+		default:
+			w.WriteHeader(http.StatusBadRequest)
+			return
+	}
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
@@ -291,94 +319,141 @@ func ChangeTitlePriorityTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&priorityTask)
 }
 
-// swagger:route PATCH /changedescrition/prioritytask/{id} PriorityTask changePriorityTaskDescription
 //
+// // swagger:route PATCH /changetitle/prioritytask/{id} PriorityTask changePriorityTaskTitle
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: PriorityTask
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes title of a priority task
+// // res: updated priority task with new title as JSON
+// func ChangeTitlePriorityTask(w http.ResponseWriter, r *http.Request) {
+// 	var newTitle models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newTitle)
 //
-// Produces:
-// - application/json
+// 	params := mux.Vars(r)
+// 	var priorityTask models.PriorityTask
 //
-// Consumes:
-// - application/json
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&priorityTask, params["id"])
+// 	if priorityTask.Title == "" {
+// 		fmt.Printf("Error finding priorityTask %s before title change", priorityTask.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
 //
-// responses:
-//   200: PriorityTask
-//   400: nil
-//   404: nil
+// 	_, err := database.ChangeTaskTitle(database.TYPE_PRIORITYTASK, priorityTask.ID, newTitle.Title) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
 //
-// controller: changes description of a priority task
-// res: updated priority task with new description as JSON
-func ChangeDescriptionPriorityTask(w http.ResponseWriter, r *http.Request) {
-	var newDescription models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newDescription)
-
-	params := mux.Vars(r)
-	var priorityTask models.PriorityTask
-
-	// Ignore cache, go straight to DB
-	database.DB.First(&priorityTask, params["id"])
-	if priorityTask.Title == "" {
-		fmt.Printf("Error finding priorityTask %s before description change", priorityTask.Title)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	_, err := database.ChangeTaskDescription(database.TYPE_PRIORITYTASK, priorityTask.ID, newDescription.Description) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	priorityTask.Description = newDescription.Description // updates response
-
-	// Update element in the redis cache before returning the result
-	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&priorityTask)
-}
-
-// swagger:route PATCH /changeproject/prioritytask/{id} PriorityTask changePriorityTaskProject
+// 	priorityTask.Title = newTitle.Title // updates response
 //
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
 //
-// Produces:
-// - application/json
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&priorityTask)
+// }
 //
-// Consumes:
-// - application/json
+// // swagger:route PATCH /changedescrition/prioritytask/{id} PriorityTask changePriorityTaskDescription
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: PriorityTask
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes description of a priority task
+// // res: updated priority task with new description as JSON
+// func ChangeDescriptionPriorityTask(w http.ResponseWriter, r *http.Request) {
+// 	var newDescription models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newDescription)
 //
-// responses:
-//   200: PriorityTask
-//   400: nil
-//   404: nil
+// 	params := mux.Vars(r)
+// 	var priorityTask models.PriorityTask
 //
-// controller: changes project of a priority task
-// res: updated priority task with new project assignment as JSON
-func ChangeProjectPriorityTask(w http.ResponseWriter, r *http.Request) {
-	var newDescription models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newDescription)
-
-	params := mux.Vars(r)
-	var priorityTask models.PriorityTask
-
-	// Ignore cache, go straight to DB
-	database.DB.First(&priorityTask, params["id"])
-	if priorityTask.Title == "" {
-		fmt.Printf("Error finding priority task %s before project assignment change", priorityTask.Title)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	_, err := database.ChangeTaskProject(database.TYPE_TASK, priorityTask.ID, newDescription.ProjectID) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	priorityTask.ProjectID = newDescription.ProjectID // updates response
-
-	// Update element in the redis cache before returning the result
-	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&priorityTask)
-}
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&priorityTask, params["id"])
+// 	if priorityTask.Title == "" {
+// 		fmt.Printf("Error finding priorityTask %s before description change", priorityTask.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
+//
+// 	_, err := database.ChangeTaskDescription(database.TYPE_PRIORITYTASK, priorityTask.ID, newDescription.Description) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	priorityTask.Description = newDescription.Description // updates response
+//
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
+//
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&priorityTask)
+// }
+//
+// // swagger:route PATCH /changeproject/prioritytask/{id} PriorityTask changePriorityTaskProject
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: PriorityTask
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes project of a priority task
+// // res: updated priority task with new project assignment as JSON
+// func ChangeProjectPriorityTask(w http.ResponseWriter, r *http.Request) {
+// 	var newDescription models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newDescription)
+//
+// 	params := mux.Vars(r)
+// 	var priorityTask models.PriorityTask
+//
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&priorityTask, params["id"])
+// 	if priorityTask.Title == "" {
+// 		fmt.Printf("Error finding priority task %s before project assignment change", priorityTask.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
+//
+// 	_, err := database.ChangeTaskProject(database.TYPE_TASK, priorityTask.ID, newDescription.ProjectID) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	priorityTask.ProjectID = newDescription.ProjectID // updates response
+//
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], priorityTask)
+//
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&priorityTask)
+// }

@@ -197,7 +197,9 @@ func ToggleCompleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&expiringTask)
 }
 
-// swagger:route PATCH /changetitle/expiringtask/{id} ExpiringTask changeExpiringTaskTitle
+
+
+// swagger:route PATCH /expiringtask/{id}?change=change ExpiringTask changeExpiringTask
 //
 //
 // Produces:
@@ -211,126 +213,201 @@ func ToggleCompleteExpiringTask(w http.ResponseWriter, r *http.Request) {
 //   400: nil
 //   404: nil
 //
-// controller: changes title of a expiring task
+// controller: changes either title, description, or projectID of a expiring task
 // res: updated expiring task with new title as JSON
-func ChangeTitleExpiringTask(w http.ResponseWriter, r *http.Request) {
-	var newTitle models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newTitle)
+func ChangeExpiringTaskX(w http.ResponseWriter, r *http.Request) {
+	var newModifier models.TaskModifier
+	queries := r.URL.Query()
+	json.NewDecoder(r.Body).Decode(&newModifier)
 
 	params := mux.Vars(r)
 	var expiringTask models.ExpiringTask
 
 	// Ignore cache, go straight to DB
 	database.DB.First(&expiringTask, params["id"])
-	if expiringTask.Title == "" {
-		fmt.Printf("Error finding expiringTask %s before title change", expiringTask.Title)
+	if (expiringTask == models.ExpiringTask{}) {
+		fmt.Println("Error finding expiringTask before change")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	_, err := database.ChangeTaskTitle(database.TYPE_EXPIRINGTASK, expiringTask.ID, newTitle.Title) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	// change can be "title", "description", or "ProjectID"
+	switch queries.Get("change") {
+		case "title":
+			_, err := database.ChangeTaskTitle(database.TYPE_EXPIRINGTASK, expiringTask.ID, newModifier.Title) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 
-	expiringTask.Title = newTitle.Title // updates response
+			expiringTask.Title = newModifier.Title // updates response
+
+		case "description":
+			_, err := database.ChangeTaskDescription(database.TYPE_EXPIRINGTASK, expiringTask.ID, newModifier.Description) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			expiringTask.Description = newModifier.Description // updates response
+
+		case "ProjectID":
+			_, err := database.ChangeTaskProject(database.TYPE_EXPIRINGTASK, expiringTask.ID, newModifier.ProjectID) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			expiringTask.ProjectID = newModifier.ProjectID // updates response
+
+		default:
+			w.WriteHeader(http.StatusBadRequest)
+			return
+	}
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&expiringTask)
+
 }
 
-// swagger:route PATCH /changedescrition/expiringtask/{id} ExpiringTask changeExpiringTaskDescription
+
+// // swagger:route PATCH /changetitle/expiringtask/{id} ExpiringTask changeExpiringTaskTitle
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: ExpiringTask
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes title of a expiring task
+// // res: updated expiring task with new title as JSON
+// func ChangeTitleExpiringTask(w http.ResponseWriter, r *http.Request) {
+// 	var newTitle models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newTitle)
 //
+// 	params := mux.Vars(r)
+// 	var expiringTask models.ExpiringTask
 //
-// Produces:
-// - application/json
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&expiringTask, params["id"])
+// 	if expiringTask.Title == "" {
+// 		fmt.Printf("Error finding expiringTask %s before title change", expiringTask.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
 //
-// Consumes:
-// - application/json
+// 	_, err := database.ChangeTaskTitle(database.TYPE_EXPIRINGTASK, expiringTask.ID, newTitle.Title) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
 //
-// responses:
-//   200: ExpiringTask
-//   400: nil
-//   404: nil
+// 	expiringTask.Title = newTitle.Title // updates response
 //
-// controller: changes description of a expiring task
-// res: updated expiring task with new description as JSON
-func ChangeDescriptionExpiringTask(w http.ResponseWriter, r *http.Request) {
-	var newDescription models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newDescription)
-
-	params := mux.Vars(r)
-	var expiringTask models.ExpiringTask
-
-	// Ignore cache, go straight to DB
-	database.DB.First(&expiringTask, params["id"])
-	if expiringTask.Title == "" {
-		fmt.Printf("Error finding expiringTask %s before description change", expiringTask.Title)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	_, err := database.ChangeTaskDescription(database.TYPE_EXPIRINGTASK, expiringTask.ID, newDescription.Description) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	expiringTask.Description = newDescription.Description // updates response
-
-	// Update element in the redis cache before returning the result
-	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&expiringTask)
-}
-
-// swagger:route PATCH /changeproject/expiringtask/{id} ExpiringTask changeExpiringTaskProject
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
 //
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&expiringTask)
+// }
 //
-// Produces:
-// - application/json
+// // swagger:route PATCH /changedescrition/expiringtask/{id} ExpiringTask changeExpiringTaskDescription
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: ExpiringTask
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes description of a expiring task
+// // res: updated expiring task with new description as JSON
+// func ChangeDescriptionExpiringTask(w http.ResponseWriter, r *http.Request) {
+// 	var newDescription models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newDescription)
 //
-// Consumes:
-// - application/json
+// 	params := mux.Vars(r)
+// 	var expiringTask models.ExpiringTask
 //
-// responses:
-//   200: ExpiringTask
-//   400: nil
-//   404: nil
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&expiringTask, params["id"])
+// 	if expiringTask.Title == "" {
+// 		fmt.Printf("Error finding expiringTask %s before description change", expiringTask.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
 //
-// controller: changes project of an expiring task
-// res: updated expiring task with new project assignment as JSON
-func ChangeProjectExpiringTask(w http.ResponseWriter, r *http.Request) {
-	var newDescription models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newDescription)
-
-	params := mux.Vars(r)
-	var expiringTask models.ExpiringTask
-
-	// Ignore cache, go straight to DB
-	database.DB.First(&expiringTask, params["id"])
-	if expiringTask.Title == "" {
-		fmt.Printf("Error finding expiring task %s before project assignment change", expiringTask.Title)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	_, err := database.ChangeTaskProject(database.TYPE_TASK, expiringTask.ID, newDescription.ProjectID) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	expiringTask.ProjectID = newDescription.ProjectID // updates response
-
-	// Update element in the redis cache before returning the result
-	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&expiringTask)
-}
+// 	_, err := database.ChangeTaskDescription(database.TYPE_EXPIRINGTASK, expiringTask.ID, newDescription.Description) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	expiringTask.Description = newDescription.Description // updates response
+//
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
+//
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&expiringTask)
+// }
+//
+// // swagger:route PATCH /changeproject/expiringtask/{id} ExpiringTask changeExpiringTaskProject
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: ExpiringTask
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes project of an expiring task
+// // res: updated expiring task with new project assignment as JSON
+// func ChangeProjectExpiringTask(w http.ResponseWriter, r *http.Request) {
+// 	var newDescription models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newDescription)
+//
+// 	params := mux.Vars(r)
+// 	var expiringTask models.ExpiringTask
+//
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&expiringTask, params["id"])
+// 	if expiringTask.Title == "" {
+// 		fmt.Printf("Error finding expiring task %s before project assignment change", expiringTask.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
+//
+// 	_, err := database.ChangeTaskProject(database.TYPE_TASK, expiringTask.ID, newDescription.ProjectID) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	expiringTask.ProjectID = newDescription.ProjectID // updates response
+//
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], expiringTask)
+//
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&expiringTask)
+// }

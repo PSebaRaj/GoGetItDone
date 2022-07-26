@@ -190,7 +190,7 @@ func ToggleCompleteTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&task)
 }
 
-// swagger:route PATCH /changetitle/task/{id} Task changeTaskTitle
+// swagger:route PATCH /task/{id}?change=change Task changeTask
 //
 //
 // Produces:
@@ -204,30 +204,56 @@ func ToggleCompleteTask(w http.ResponseWriter, r *http.Request) {
 //   400: nil
 //   404: nil
 //
-// controller: changes title of a (regular) task
+// controller: changes either title, description, or projectID of a (regular) task
 // res: updated (regular) task with new title as JSON
-func ChangeTitleTask(w http.ResponseWriter, r *http.Request) {
-	var newTitle models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newTitle)
+func ChangeTaskX(w http.ResponseWriter, r *http.Request) {
+	var newModifier models.TaskModifier
+	queries := r.URL.Query()
+	json.NewDecoder(r.Body).Decode(&newModifier)
 
 	params := mux.Vars(r)
 	var task models.Task
 
 	// Ignore cache, go straight to DB
 	database.DB.First(&task, params["id"])
-	if task.Title == "" {
-		fmt.Printf("Error finding task %s before title change", task.Title)
+	if (task == models.Task{}) {
+		fmt.Println("Error finding task before change")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	_, err := database.ChangeTaskTitle(database.TYPE_TASK, task.ID, newTitle.Title) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	// change can be "title", "description", or "ProjectID"
+	switch queries.Get("change") {
+		case "title":
+			_, err := database.ChangeTaskTitle(database.TYPE_TASK, task.ID, newModifier.Title) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 
-	task.Title = newTitle.Title // updates response
+			task.Title = newModifier.Title // updates response
+
+		case "description":
+			_, err := database.ChangeTaskDescription(database.TYPE_TASK, task.ID, newModifier.Description) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			task.Description = newModifier.Description // updates response
+		case "ProjectID":
+			_, err := database.ChangeTaskProject(database.TYPE_TASK, task.ID, newModifier.ProjectID) // updates DB
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+
+			task.ProjectID = newModifier.ProjectID // updates response
+
+		default:
+			w.WriteHeader(http.StatusBadRequest)
+			return
+	}
 
 	// Update element in the redis cache before returning the result
 	cache.SetInCache(cache.REDIS, params["id"], task)
@@ -236,94 +262,144 @@ func ChangeTitleTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&task)
 }
 
-// swagger:route PATCH /changedescrition/task/{id} Task changeTaskDescription
+
+
+// // swagger:route PATCH /changetitle/task/{id} Task changeTaskTitle
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: Task
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes title of a (regular) task
+// // res: updated (regular) task with new title as JSON
+// func ChangeTitleTask(w http.ResponseWriter, r *http.Request) {
+// 	var newTitle models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newTitle)
 //
+// 	params := mux.Vars(r)
+// 	var task models.Task
 //
-// Produces:
-// - application/json
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&task, params["id"])
+// 	if task.Title == "" {
+// 		fmt.Printf("Error finding task %s before title change", task.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
 //
-// Consumes:
-// - application/json
+// 	_, err := database.ChangeTaskTitle(database.TYPE_TASK, task.ID, newTitle.Title) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
 //
-// responses:
-//   200: Task
-//   400: nil
-//   404: nil
+// 	task.Title = newTitle.Title // updates response
 //
-// controller: changes description of a (regular) task
-// res: updated (regular) task with new description as JSON
-func ChangeDescriptionTask(w http.ResponseWriter, r *http.Request) {
-	var newDescription models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newDescription)
-
-	params := mux.Vars(r)
-	var task models.Task
-
-	// Ignore cache, go straight to DB
-	database.DB.First(&task, params["id"])
-	if task.Title == "" {
-		fmt.Printf("Error finding task %s before description change", task.Title)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	_, err := database.ChangeTaskDescription(database.TYPE_TASK, task.ID, newDescription.Description) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	task.Description = newDescription.Description // updates response
-
-	// Update element in the redis cache before returning the result
-	cache.SetInCache(cache.REDIS, params["id"], task)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&task)
-}
-
-// swagger:route PATCH /changeproject/task/{id} Task changeTaskProject
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], task)
 //
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&task)
+// }
 //
-// Produces:
-// - application/json
+// // swagger:route PATCH /changedescrition/task/{id} Task changeTaskDescription
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: Task
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes description of a (regular) task
+// // res: updated (regular) task with new description as JSON
+// func ChangeDescriptionTask(w http.ResponseWriter, r *http.Request) {
+// 	var newDescription models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newDescription)
 //
-// Consumes:
-// - application/json
+// 	params := mux.Vars(r)
+// 	var task models.Task
 //
-// responses:
-//   200: Task
-//   400: nil
-//   404: nil
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&task, params["id"])
+// 	if task.Title == "" {
+// 		fmt.Printf("Error finding task %s before description change", task.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
 //
-// controller: changes project of a (regular) task
-// res: updated (regular) task with new project assignment as JSON
-func ChangeProjectTask(w http.ResponseWriter, r *http.Request) {
-	var newDescription models.TaskModifier
-	json.NewDecoder(r.Body).Decode(&newDescription)
+// 	_, err := database.ChangeTaskDescription(database.TYPE_TASK, task.ID, newDescription.Description) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	task.Description = newDescription.Description // updates response
+//
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], task)
+//
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&task)
+// }
+//
+// // swagger:route PATCH /changeproject/task/{id} Task changeTaskProject
+// //
+// //
+// // Produces:
+// // - application/json
+// //
+// // Consumes:
+// // - application/json
+// //
+// // responses:
+// //   200: Task
+// //   400: nil
+// //   404: nil
+// //
+// // controller: changes project of a (regular) task
+// // res: updated (regular) task with new project assignment as JSON
+// func ChangeProjectTask(w http.ResponseWriter, r *http.Request) {
+// 	var newDescription models.TaskModifier
+// 	json.NewDecoder(r.Body).Decode(&newDescription)
+//
+// 	params := mux.Vars(r)
+// 	var task models.Task
+//
+// 	// Ignore cache, go straight to DB
+// 	database.DB.First(&task, params["id"])
+// 	if task.Title == "" {
+// 		fmt.Printf("Error finding task %s before project assignment change", task.Title)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
+//
+// 	_, err := database.ChangeTaskProject(database.TYPE_TASK, task.ID, newDescription.ProjectID) // updates DB
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
+//
+// 	task.ProjectID = newDescription.ProjectID // updates response
+//
+// 	// Update element in the redis cache before returning the result
+// 	cache.SetInCache(cache.REDIS, params["id"], task)
+//
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(&task)
+// }
+//
 
-	params := mux.Vars(r)
-	var task models.Task
-
-	// Ignore cache, go straight to DB
-	database.DB.First(&task, params["id"])
-	if task.Title == "" {
-		fmt.Printf("Error finding task %s before project assignment change", task.Title)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	_, err := database.ChangeTaskProject(database.TYPE_TASK, task.ID, newDescription.ProjectID) // updates DB
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	task.ProjectID = newDescription.ProjectID // updates response
-
-	// Update element in the redis cache before returning the result
-	cache.SetInCache(cache.REDIS, params["id"], task)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&task)
-}

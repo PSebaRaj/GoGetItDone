@@ -3,14 +3,10 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](/LICENSE)
 [![Build Status](https://img.shields.io/github/workflow/status/psebaraj/gogetitdone/Go?style=for-the-badge)](https://github.com/PSebaRaj/GoGetItDone/actions/workflows/go.yml)
 [![Go ReportCard](https://goreportcard.com/badge/github.com/psebaraj/gogetitdone?style=for-the-badge)](https://goreportcard.com/report/psebaraj/gogetitdone)
-[![Lines of Code](https://img.shields.io/tokei/lines/github/psebaraj/gogetitdone?style=for-the-badge)](https://github.com/psebaraj/gogetitdone/actions)
 
 Backend of a to-do app. Written in Go and utilizes Redis and PostgreSQL.
 
 ## To-Do:
-- [x] Better error handling
-	- [x] Concurrent processes, namely UpdateExpiringTask (updates DB and JSON res)
-	- [x] Redis [functions](https://github.com/PSebaRaj/GoGetItDone/blob/main/cache/cache.go)
 - [x] Use Prepare (Postgres) to cache PSQL statements for speed (v1.1.0)
 	- UpdateExpiringTask and /database/taskFunctions.go
 	- [GORM Doc 1](https://gorm.io/docs/performance.html) and [GORM Doc 2](https://gorm.io/docs/v2_release_note.html#Prepared-Statement-Mode)

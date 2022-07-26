@@ -179,66 +179,16 @@ info:
   title: GoGetItDone
   version: 1.0.0
 paths:
-  /changedescrition/expiringtask/{id}:
-    patch:
-      consumes:
-      - application/json
-      operationId: changeExpiringTaskDescription
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ExpiringTask
-          schema:
-            $ref: '#/definitions/ExpiringTask'
-        "400":
-          $ref: '#/responses/nil'
-        "404":
-          $ref: '#/responses/nil'
-      tags:
-      - ExpiringTask
-  /changedescrition/prioritytask/{id}:
-    patch:
-      consumes:
-      - application/json
-      operationId: changePriorityTaskDescription
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: PriorityTask
-          schema:
-            $ref: '#/definitions/PriorityTask'
-        "400":
-          $ref: '#/responses/nil'
-        "404":
-          $ref: '#/responses/nil'
-      tags:
-      - PriorityTask
-  /changedescrition/task/{id}:
-    patch:
-      consumes:
-      - application/json
-      operationId: changeTaskDescription
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Task
-          schema:
-            $ref: '#/definitions/Task'
-        "400":
-          $ref: '#/responses/nil'
-        "404":
-          $ref: '#/responses/nil'
-      tags:
-      - Task
   /changeproject/expiringtask/{id}:
     patch:
       consumes:
       - application/json
+      - application/json
+      - application/json
       operationId: changeExpiringTaskProject
       produces:
+      - application/json
+      - application/json
       - application/json
       responses:
         "200":
@@ -255,8 +205,12 @@ paths:
     patch:
       consumes:
       - application/json
+      - application/json
+      - application/json
       operationId: changePriorityTaskProject
       produces:
+      - application/json
+      - application/json
       - application/json
       responses:
         "200":
@@ -273,62 +227,12 @@ paths:
     patch:
       consumes:
       - application/json
+      - application/json
+      - application/json
       operationId: changeTaskProject
       produces:
       - application/json
-      responses:
-        "200":
-          description: Task
-          schema:
-            $ref: '#/definitions/Task'
-        "400":
-          $ref: '#/responses/nil'
-        "404":
-          $ref: '#/responses/nil'
-      tags:
-      - Task
-  /changetitle/expiringtask/{id}:
-    patch:
-      consumes:
       - application/json
-      operationId: changeExpiringTaskTitle
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ExpiringTask
-          schema:
-            $ref: '#/definitions/ExpiringTask'
-        "400":
-          $ref: '#/responses/nil'
-        "404":
-          $ref: '#/responses/nil'
-      tags:
-      - ExpiringTask
-  /changetitle/prioritytask/{id}:
-    patch:
-      consumes:
-      - application/json
-      operationId: changePriorityTaskTitle
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: PriorityTask
-          schema:
-            $ref: '#/definitions/PriorityTask'
-        "400":
-          $ref: '#/responses/nil'
-        "404":
-          $ref: '#/responses/nil'
-      tags:
-      - PriorityTask
-  /changetitle/task/{id}:
-    patch:
-      consumes:
-      - application/json
-      operationId: changeTaskTitle
-      produces:
       - application/json
       responses:
         "200":
@@ -561,6 +465,24 @@ paths:
           $ref: '#/responses/nil'
       tags:
       - ExpiringTask
+  /expiringtask/{id}?change=change:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeExpiringTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ExpiringTask
+          schema:
+            $ref: '#/definitions/ExpiringTask'
+        "400":
+          $ref: '#/responses/nil'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - ExpiringTask
   /expiringtasks:
     get:
       operationId: getExpiringTasks
@@ -611,6 +533,24 @@ paths:
           description: PriorityTask
           schema:
             $ref: '#/definitions/PriorityTask'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - PriorityTask
+  /prioritytask/{id}?change=change:
+    patch:
+      consumes:
+      - application/json
+      operationId: changePriorityTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PriorityTask
+          schema:
+            $ref: '#/definitions/PriorityTask'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
@@ -689,6 +629,24 @@ paths:
           description: Task
           schema:
             $ref: '#/definitions/Task'
+        "404":
+          $ref: '#/responses/nil'
+      tags:
+      - Task
+  /task/{id}?change=change:
+    patch:
+      consumes:
+      - application/json
+      operationId: changeTask
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task
+          schema:
+            $ref: '#/definitions/Task'
+        "400":
+          $ref: '#/responses/nil'
         "404":
           $ref: '#/responses/nil'
       tags:
