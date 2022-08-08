@@ -6,7 +6,7 @@
 
 Backend of a to-do app. Created because I don't want to pay for Todoist Premium (and there are some missing features surrounding collaboration that I really want).
 
-Written in Go and utilizes Redis for caching and PostgreSQL for long-term storage. Currently on v1.0.0, which implements users (people) and three different types of tasks. Currently in development, v1.1.0 will include refactored tasks, as well as two new features (projects, which are groups of tasks, and groups, which are collections of users that can share tasks). More information about v1.1.0 can be found [here](https://github.com/PSebaRaj/GoGetItDone/blob/main/README.md#to-do).
+Written in Go and utilizes Redis for caching and PostgreSQL for persistent storage. Currently on v1.0.0, which implements users (people) and three different types of tasks. Currently in development, v1.1.0 will include refactored tasks, as well as two new features (projects, which are groups of tasks, and groups, which are collections of users that can share tasks). More information about v1.1.0 can be found [here](https://github.com/PSebaRaj/GoGetItDone/blob/main/README.md#to-do).
 
 As of right now, only the backend (server and cache) is complete. A friend has agreed to create the client, and to make it as painless as possible, I have documented all of the endpoints with Swagger.
 
